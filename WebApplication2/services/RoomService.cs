@@ -21,22 +21,35 @@ namespace WebApplication2.services
 
         public async Task Delete(int id)
         {
-            var room = await _db.Rooms.Include(x => x.Reservations).ThenInclude(x => x.).FirstOrDefaultAsync(x => x.RoomId == id);
+            var room = await _db.Rooms
+                .Include(x => x.RoomImages)
+                .Include(x => x.Reservations)
+                .FirstOrDefaultAsync(x => x.RoomId == id);
+
             if (room != null)
             {
+                // Remove the reservations and their room images if there are any
                 if (room.Reservations != null)
                 {
                     _db.Reservations.RemoveRange(room.Reservations);
-                    await _db.SaveChangesAsync();
                 }
+
+                if (room.RoomImages != null)
+                {
+                    _db.RoomImages.RemoveRange(room.RoomImages);
+                }
+
+                // Remove the room
                 _db.Rooms.Remove(room);
+
+                // Save all changes using the same _db context instance
                 await _db.SaveChangesAsync();
             }
         }
 
         public async Task<IEnumerable<Room>> GetAllRoom()
         {
-            return await _db.Rooms.Include(x => x.Reservations).ToListAsync();
+            return await _db.Rooms.Include(x => x.Reservations).Include(x => x.RoomImages).ToListAsync();
         }
 
         public async Task<Room> GetId(int id)
@@ -49,9 +62,11 @@ namespace WebApplication2.services
             return null;
         }
 
-        public Task Update(int id, Room room)
+        public async Task Update(int id, Room room)
         {
             room.RoomId = id;
+            _db.Rooms.Add(room);
+            await _db.SaveChangesAsync();
         }
     }
 }
