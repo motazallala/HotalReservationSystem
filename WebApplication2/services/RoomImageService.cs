@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Composition;
 using WebApplication1.Data;
 using WebApplication2.Data.Model;
 
@@ -7,54 +8,46 @@ namespace WebApplication2.services
 {
     public class RoomImageService : IRoomImageService
     {
-        private readonly ApplicationDBContext _dbRoomImage;
+        private readonly ApplicationDBContext _db;
 
-        public RoomImageService(ApplicationDBContext roomImage)
+        public RoomImageService(ApplicationDBContext db)
         {
-            _dbRoomImage = roomImage;
+            _db = db;
         }
 
-        public async Task<RoomImage> AddRoomImageAsync(RoomImage roomImage)
+        public async Task AddRoomImage(RoomImage roomImage)
         {
-            await _dbRoomImage.RoomImages.AddAsync(roomImage);
-            await _dbRoomImage.SaveChangesAsync();
-            return roomImage;
+            await _db.RoomImages.AddAsync(roomImage);
+            await _db.SaveChangesAsync();
         }
 
-        public async Task<List<RoomImage>> GetAllRoomImageAsync(RoomImage roomImage)
+        public async Task<List<RoomImage>> GetAllRoomImage(RoomImage roomImage)
         {
-            var allRoomImage = await _dbRoomImage.RoomImages.ToListAsync();
+            var allRoomImage = await _db.RoomImages.ToListAsync();
             return allRoomImage;
         }
 
-        public async Task RemoveRoomImageAsync(int roomImageId)
+        public async Task RemoveRoomImage(int roomImageId)
         {
-            var removeRoomImage = await _dbRoomImage.RoomImages.FirstOrDefaultAsync(u => u.RoomImageId == roomImageId);
+            var removeRoomImage = await _db.RoomImages.FirstOrDefaultAsync(u => u.RoomImageId == roomImageId);
 
             if (removeRoomImage != null)
             {
-                _dbRoomImage.RoomImages.Remove(removeRoomImage);
-                await _dbRoomImage.SaveChangesAsync();
+                _db.RoomImages.Remove(removeRoomImage);
+                await _db.SaveChangesAsync();
             }
         }
 
-        public async Task<RoomImage> UpdateRoomImageAsync(int roomImageId, RoomImage roomImage)
+        public async Task UpdateRoomImage(int Id, RoomImage roomImage)
         {
-            var updateRoomImage = await _dbRoomImage.RoomImages.FirstOrDefaultAsync(u => u.RoomImageId == roomImageId);
+            roomImage.RoomImageId = Id;
+            var updateRoomImage = await _db.RoomImages.FirstOrDefaultAsync(u => u.RoomImageId == Id);
 
             if (roomImage != null)
             {
-
-                roomImage.ImageUrl = updateRoomImage.ImageUrl;
-
-                await _dbRoomImage.SaveChangesAsync();
+                _db.Update(roomImage);
+                await _db.SaveChangesAsync();
             }
-            else
-            {
-                return null;
-            }
-
-            return roomImage;
         }
     }
 }
