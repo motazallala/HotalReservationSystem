@@ -21,7 +21,7 @@ namespace WebApplication2.Controllers
         // GET: RoomTypes
         public IActionResult Index()
         {
-            var data = _roomTypeService.GetAllRoomTypes().ToList();
+            var data = _roomTypeService.GetAllRoomTypes();
             return View(data);
         }
 

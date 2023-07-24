@@ -1,4 +1,5 @@
-﻿using WebApplication1.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using WebApplication1.Data;
 using WebApplication2.Data.Model;
 
 namespace WebApplication2.services
@@ -12,38 +13,47 @@ namespace WebApplication2.services
             _db = db;
         }
 
-        public void Add(RoomType roomType)
+        public async Task Add(RoomType roomType)
         {
-            _db.RoomTypes.Add(roomType);
-            _db.SaveChanges();
+            await _db.RoomTypes.AddAsync(roomType);
+            await _db.SaveChangesAsync();
         }
 
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
-            var data = _db.RoomTypes.FirstOrDefault(x => x.RoomTypeId == id);
+            var data = await _db.RoomTypes.FirstOrDefaultAsync(x => x.RoomTypeId == id);
             if (data != null)
             {
                 _db.RoomTypes.Remove(data);
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
             }
         }
 
-        public IEnumerable<RoomType> GetAllRoomTypes()
+        public async Task<IEnumerable<RoomType>> GetAllRoomTypes()
         {
-            var result = _db.RoomTypes.ToList();
+            var result = await _db.RoomTypes.ToListAsync();
             return result;
         }
 
-        public RoomType? GetId(int id)
+        public async Task<RoomType> GetId(int id)
         {
-            return _db.RoomTypes.FirstOrDefault(x => x.RoomTypeId == id);
+            var data = await _db.RoomTypes.FirstOrDefaultAsync(x => x.RoomTypeId == id);
+            if (data != null)
+            {
+                return data;
+            }
+            return null;
         }
 
-        public void Update(int id, RoomType roomType)
+        public async Task Update(int id, RoomType roomType)
         {
             roomType.RoomTypeId = id;
-            _db.SaveChanges();
-            return;
+            var roomTypeToChange = await _db.RoomTypes.FirstOrDefaultAsync(e => e.RoomTypeId == id);
+            if (roomTypeToChange != null)
+            {
+                _db.RoomTypes.Update(roomTypeToChange);
+                _db.SaveChanges();
+            }
         }
     }
 }

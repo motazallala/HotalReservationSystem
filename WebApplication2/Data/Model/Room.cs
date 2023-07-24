@@ -12,12 +12,12 @@
         // Foreign key to the RoomType that this room belongs to
         public int RoomTypeId { get; set; }
 
-        public RoomType? RoomType { get; set; }
+        public RoomType RoomType { get; set; }
 
         // One-to-many relationship: One Room has many RoomImages
-        public ICollection<RoomImage>? RoomImages { get; set; }
+        public ICollection<RoomImage> RoomImages { get; set; }
 
         // One-to-many relationship: One Room has many Reservations
-        public ICollection<Reservation>? Reservations { get; set; }
+        public ICollection<Reservation> Reservations { get; set; }
     }
 }

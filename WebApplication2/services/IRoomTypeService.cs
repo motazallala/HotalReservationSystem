@@ -4,14 +4,14 @@ namespace WebApplication2.services
 {
     public interface IRoomTypeService
     {
-        IEnumerable<RoomType> GetAllRoomTypes();
+        Task<IEnumerable<RoomType>> GetAllRoomTypes();
 
-        RoomType? GetId(int id);
+        Task<RoomType> GetId(int id);
 
-        void Add(RoomType roomType);
+        Task Add(RoomType roomType);
 
-        void Update(int id, RoomType roomType);
+        Task Update(int id, RoomType roomType);
 
-        void Delete(int id);
+        Task Delete(int id);
     }
 }
