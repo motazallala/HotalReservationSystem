@@ -39,7 +39,7 @@ namespace WebApplication2.Controllers
                 PagesCount = pageSize,
                 RoomTypes = (IEnumerable<RoomTypeViewModel>)roomType.GetPageItems(id, pageSize),
             };
-            return View(data);
+            return View(indexdRoomType);
         }
 
         // GET: RoomTypes/Details/5
