@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication2.Data.Model;
+using WebApplication2.services.Mapping;
 
 namespace WebApplication2.services
 {
@@ -19,6 +21,11 @@ namespace WebApplication2.services
             await _db.SaveChangesAsync();
         }
 
+        public int CountAllRoomType(string searchText)
+        {
+            return _db.RoomTypes.Where(x => x.Type.Contains(searchText)).Count();
+        }
+
         public async Task Delete(int id)
         {
             var data = await _db.RoomTypes.FirstOrDefaultAsync(x => x.RoomTypeId == id);
@@ -35,9 +42,12 @@ namespace WebApplication2.services
             return result;
         }
 
-        public Task<IEnumerable<T>> GetAllRoomTypesPager<T>()
+        public async Task<IEnumerable<T>> GetAllRoomTypesPager<T>(string searchText)
         {
-            throw new NotImplementedException();
+            IQueryable<RoomType> data = _db.RoomTypes;
+            data = data.Where(x => x.Type.Contains(searchText));
+
+            return await data.ProjectTo<T>().ToListAsync();
         }
 
         public async Task<RoomType> GetId(int id)

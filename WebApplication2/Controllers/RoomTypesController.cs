@@ -20,14 +20,13 @@ namespace WebApplication2.Controllers
         }
 
         // GET: RoomTypes
-        public async Task<IActionResult> Index(int id, int pageSize = 10)
+        public async Task<IActionResult> Index(int id = 1, int pageSize = 10, string search = "")
         {
-            var roomType = await _roomTypeService.GetAllRoomTypes();
             if (pageSize <= 0)
             {
                 pageSize = 10;
             }
-            int pageCount = (int)Math.Ceiling((double)roomType.Count() / pageSize);
+            int pageCount = (int)Math.Ceiling((double)_roomTypeService.CountAllRoomType(search) / pageSize);
             if (id > pageCount || id < 1)
             {
                 id = 1;
@@ -36,8 +35,11 @@ namespace WebApplication2.Controllers
             var indexdRoomType = new RoomTypeIndexViewModel
             {
                 CurrentPage = id,
-                PagesCount = pageSize,
-                RoomTypes = (IEnumerable<RoomTypeViewModel>)roomType.GetPageItems(id, pageSize),
+                PagesCount = pageCount,
+                RoomTypes = await _roomTypeService.GetAllRoomTypesPager<RoomTypeViewModel>(search).GetPageItems(id, pageSize),
+                Action = nameof(Index),
+                Controller = "RoomTypes",
+                searchString = search,
             };
             return View(indexdRoomType);
         }

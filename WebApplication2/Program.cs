@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication2.services;
+using WebApplication2.services.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +13,7 @@ op.UseSqlServer(builder.Configuration.GetConnectionString("myDb"))
 
 builder.Services.AddScoped<IRoomTypeService, RoomTypeService>();
 builder.Services.AddScoped<IReservationsService, ReservationService>();
-
+MappingConfig.RegisterMappings(AppDomain.CurrentDomain.GetAssemblies());
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

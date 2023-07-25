@@ -5,5 +5,6 @@ namespace WebApplication2.Models.RoomType
     public class RoomTypeIndexViewModel : PageViewModel
     {
         public IEnumerable<RoomTypeViewModel> RoomTypes { get; set; }
+        public string searchString { get; set; }
     }
 }
