@@ -4,6 +4,7 @@ using WebApplication1.Data;
 using WebApplication2.Data.Model;
 using WebApplication2.Models.RoomType;
 using WebApplication2.services;
+using WebApplication2.services.Common;
 
 namespace WebApplication2.Controllers
 {
@@ -19,9 +20,25 @@ namespace WebApplication2.Controllers
         }
 
         // GET: RoomTypes
-        public IActionResult Index()
+        public async Task<IActionResult> Index(int id, int pageSize = 10)
         {
-            var data = _roomTypeService.GetAllRoomTypes();
+            var roomType = await _roomTypeService.GetAllRoomTypes();
+            if (pageSize <= 0)
+            {
+                pageSize = 10;
+            }
+            int pageCount = (int)Math.Ceiling((double)roomType.Count() / pageSize);
+            if (id > pageCount || id < 1)
+            {
+                id = 1;
+            }
+
+            var indexdRoomType = new RoomTypeIndexViewModel
+            {
+                CurrentPage = id,
+                PagesCount = pageSize,
+                RoomTypes = (IEnumerable<RoomTypeViewModel>)roomType.GetPageItems(id, pageSize),
+            };
             return View(data);
         }
 
@@ -54,7 +71,7 @@ namespace WebApplication2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("RoomTypeId,Type,Description")] RoomTypeInput roomTypeIn)
+        public async Task<IActionResult> Create([Bind("RoomTypeId,Type,Description")] RoomTypeInput roomTypeIn)
         {
             if (ModelState.IsValid)
             {
@@ -63,7 +80,7 @@ namespace WebApplication2.Controllers
                     Type = roomTypeIn.Type,
                     Description = roomTypeIn.Description,
                 };
-                _roomTypeService.Add(data);
+                await _roomTypeService.Add(data);
                 return RedirectToAction(nameof(Index));
             }
             return View(roomTypeIn);

@@ -6,6 +6,8 @@ namespace WebApplication2.services
     {
         Task<IEnumerable<RoomType>> GetAllRoomTypes();
 
+        Task<IEnumerable<T>> GetAllRoomTypesPager<T>();
+
         Task<RoomType> GetId(int id);
 
         Task Add(RoomType roomType);

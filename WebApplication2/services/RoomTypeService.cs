@@ -35,6 +35,11 @@ namespace WebApplication2.services
             return result;
         }
 
+        public Task<IEnumerable<T>> GetAllRoomTypesPager<T>()
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<RoomType> GetId(int id)
         {
             var data = await _db.RoomTypes.FirstOrDefaultAsync(x => x.RoomTypeId == id);
