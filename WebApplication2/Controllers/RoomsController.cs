@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
@@ -17,14 +16,11 @@ namespace WebApplication2.Controllers
         private readonly IRoomService _roomService;
         private readonly IRoomTypeService _roomTypeService;
 
-
         public RoomsController(ApplicationDBContext context, IRoomService roomService, IRoomTypeService roomTypeService)
         {
             _context = context;
             _roomService = roomService;
             _roomTypeService = roomTypeService;
-            
-
         }
 
         public async Task<IActionResult> Index(int id = 1, int pageSize = 5, bool availableOnly = false, int minCapacity = 0, int? type = null)
@@ -91,7 +87,7 @@ namespace WebApplication2.Controllers
                     RoomTypeId = model.RoomTypeId
                 };
 
-                await _roomService.Add(room,model.RoomImages);
+                await _roomService.Add(room, model.RoomImages);
 
                 // Redirect to the room list or any other desired page after successful addition
                 return RedirectToAction("Index");
@@ -121,7 +117,7 @@ namespace WebApplication2.Controllers
                 ChildrenPrice = room.ChildrenPrice,
                 RoomNumber = room.RoomNumber,
                 RoomTypeId = room.RoomTypeId,
-                /*RoomImages = room.RoomImages*/ // Assign the existing images to the view model
+                RoomImagesUrl = room.RoomImages // Assign the existing images to the view model
             };
 
             // Fetch available room types from the database and populate the dropdown list
@@ -176,6 +172,5 @@ namespace WebApplication2.Controllers
             // If there are any validation errors, display the edit view again with the model
             return View(viewModel);
         }
-
     }
 }

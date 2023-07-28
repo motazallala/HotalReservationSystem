@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Reflection.Metadata.Ecma335;
 using WebApplication2.Data.Model;
 
 namespace WebApplication2.Models.Room
@@ -13,10 +12,10 @@ namespace WebApplication2.Models.Room
         public int RoomNumber { get; set; }
 
         public List<IFormFile> RoomImages { get; set; }
+        public ICollection<RoomImage>? RoomImagesUrl { get; set; }
         public List<SelectListItem>? RoomTypes { get; set; }
 
         // Foreign key to the RoomType that this room belongs to
         public int RoomTypeId { get; set; }
-
     }
 }

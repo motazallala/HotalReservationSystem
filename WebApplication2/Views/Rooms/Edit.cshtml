@@ -1,0 +1,75 @@
+﻿@model WebApplication2.Models.Room.RoomInputModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Room</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Capacity" class="control-label"></label>
+                <input asp-for="Capacity" class="form-control" />
+                <span asp-validation-for="Capacity" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsTaken" /> @Html.DisplayNameFor(model => model.IsTaken)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="AdultPrice" class="control-label"></label>
+                <input asp-for="AdultPrice" class="form-control" />
+                <span asp-validation-for="AdultPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ChildrenPrice" class="control-label"></label>
+                <input asp-for="ChildrenPrice" class="form-control" />
+                <span asp-validation-for="ChildrenPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RoomNumber" class="control-label"></label>
+                <input asp-for="RoomNumber" class="form-control" />
+                <span asp-validation-for="RoomNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RoomTypeId" class="control-label"></label>
+                <select asp-for="RoomTypeId" class="form-control" asp-items="@Model.RoomTypes"></select>
+                <span asp-validation-for="RoomTypeId" class="text-danger"></span>
+            </div>
+
+            @* Display existing room images and change buttons *@
+            @if (Model.RoomImagesUrl != null && Model.RoomImagesUrl.Any())
+            {
+                <h3>Existing Images</h3>
+                @foreach (var image in Model.RoomImagesUrl)
+                {
+                    <div class="form-group">
+                        <img src="@image.ImageUrl" alt="Room Image" width="200" height="200" />
+                        <label>Change Image</label>
+                        <input type="file" name="RoomImages" class="form-control" accept="image/*" />
+                    </div>
+                }
+            }
+
+            @* Allow uploading new images *@
+            <div class="form-group">
+                <label>Upload New Images</label>
+                <input type="file" name="RoomImages" multiple class="form-control" accept="image/*" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
