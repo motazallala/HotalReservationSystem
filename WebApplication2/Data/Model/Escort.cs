@@ -4,9 +4,9 @@
     {
         public int EscortId { get; set; }
         public string FullName { get; set; }
-
+ 
         // There is no need for escort email
-        public string? Email { get; set; }
+        public string Email { get; set; }
         public bool IsAdult { get; set; }
 
         // Foreign key to the Reservation that this escort belongs to
