@@ -6,7 +6,7 @@ namespace WebApplication2.services
     {
         Task Add(Room room, List<IFormFile> roomImages);
 
-        Task Update(int id, Room room);
+        Task Update(Room room, List<IFormFile> roomImages);
 
         Task Delete(int id);
 

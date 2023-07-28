@@ -52,9 +52,32 @@ namespace WebApplication2.services
         }
 
 
-        public Task Update(int id, Room room)
+        public async Task Update(Room room, List<IFormFile> roomImages)
         {
-            throw new NotImplementedException();
+            // Update the existing room information
+            _db.Rooms.Update(room);
+            await _db.SaveChangesAsync();
+
+            // Process and update room images
+            if (roomImages != null && roomImages.Any())
+            {
+                // Delete existing images
+                var existingImages = await _db.RoomImages.Where(ri => ri.RoomId == room.RoomId).ToListAsync();
+                _db.RoomImages.RemoveRange(existingImages);
+
+                // Process and add new room images
+                foreach (var imageFile in roomImages)
+                {
+                    string imageUrl = await _imageManager.UploadImageAsync(imageFile);
+                    var newImage = new RoomImage
+                    {
+                        ImageUrl = imageUrl,
+                        RoomId = room.RoomId
+                    };
+                    _db.RoomImages.Add(newImage);
+                }
+                await _db.SaveChangesAsync();
+            }
         }
 
         public Task Delete(int id)

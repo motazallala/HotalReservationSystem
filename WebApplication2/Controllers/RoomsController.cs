@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication2.Data.Model;
 using WebApplication2.Models.Room;
@@ -22,6 +23,7 @@ namespace WebApplication2.Controllers
             _context = context;
             _roomService = roomService;
             _roomTypeService = roomTypeService;
+            
 
         }
 
@@ -98,5 +100,82 @@ namespace WebApplication2.Controllers
             // If there are any validation errors, display the create view again with the model
             return View(model);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            // Retrieve the room and its images from the database
+            var room = await _context.Rooms.Include(r => r.RoomImages).FirstOrDefaultAsync(r => r.RoomId == id);
+
+            if (room == null)
+            {
+                return NotFound();
+            }
+
+            // Map the room to the view model and pass it to the edit view
+            var viewModel = new RoomInputModel
+            {
+                Capacity = room.Capacity,
+                IsTaken = room.IsTaken,
+                AdultPrice = room.AdultPrice,
+                ChildrenPrice = room.ChildrenPrice,
+                RoomNumber = room.RoomNumber,
+                RoomTypeId = room.RoomTypeId,
+                /*RoomImages = room.RoomImages*/ // Assign the existing images to the view model
+            };
+
+            // Fetch available room types from the database and populate the dropdown list
+            var availableRoomTypes = await _roomTypeService.GetAllRoomTypes();
+            viewModel.RoomTypes = availableRoomTypes.Select(rt => new SelectListItem
+            {
+                Value = rt.RoomTypeId.ToString(),
+                Text = rt.Type
+            }).ToList();
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, RoomInputModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                // Retrieve the room from the database
+                var room = await _context.Rooms.Include(r => r.RoomImages).FirstOrDefaultAsync(r => r.RoomId == id);
+
+                if (room == null)
+                {
+                    return NotFound();
+                }
+
+                // Update the room information with the data from the view model
+                room.Capacity = viewModel.Capacity;
+                room.IsTaken = viewModel.IsTaken;
+                room.AdultPrice = viewModel.AdultPrice;
+                room.ChildrenPrice = viewModel.ChildrenPrice;
+                room.RoomNumber = viewModel.RoomNumber;
+
+                // Handle image changes (if the user uploaded new images)
+                if (viewModel.RoomImages != null && viewModel.RoomImages.Any())
+                {
+                    await _roomService.Update(room, viewModel.RoomImages);
+                }
+                else
+                {
+                    // If no new images were uploaded, update the room information only
+                    _context.Rooms.Update(room);
+                }
+
+                await _context.SaveChangesAsync();
+
+                // Redirect to the room list or any other desired page after successful update
+                return RedirectToAction("Index");
+            }
+
+            // If there are any validation errors, display the edit view again with the model
+            return View(viewModel);
+        }
+
     }
 }

@@ -13,7 +13,6 @@ namespace WebApplication2.Models.Room
         public int RoomNumber { get; set; }
 
         public List<IFormFile> RoomImages { get; set; }
-
         public List<SelectListItem>? RoomTypes { get; set; }
 
         // Foreign key to the RoomType that this room belongs to
