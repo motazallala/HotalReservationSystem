@@ -12,9 +12,9 @@ namespace WebApplication2.services
 
         Task<IEnumerable<Room>> GetAllRoom();
 
-        Task<IEnumerable<T>> GetSearchResults<T>(bool availableOnly = false,
-                                            RoomType[] types = null,
-                                            int? minCapacity = null);
+        Task<IEnumerable<T>> GetSearchResults<T>(bool availableOnly = false
+                                            /*int? types = null,
+                                            int? minCapacity = null*/);
 
         Task<Room> GetId(int id);
     }

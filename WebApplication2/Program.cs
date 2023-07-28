@@ -13,6 +13,7 @@ op.UseSqlServer(builder.Configuration.GetConnectionString("myDb"))
 
 builder.Services.AddScoped<IRoomTypeService, RoomTypeService>();
 builder.Services.AddScoped<IReservationsService, ReservationService>();
+builder.Services.AddScoped<IRoomService, RoomService>();
 /*MappingConfig.RegisterMappings(AppDomain.CurrentDomain.GetAssemblies());*/
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
 var app = builder.Build();

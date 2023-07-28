@@ -1,0 +1,119 @@
+﻿@model WebApplication2.Models.Room.RoomIndexVirwModel
+
+@{
+    ViewData["Title"] = "View";
+}
+
+<h1>View</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<div class="row row-cards">
+    <div class="col-lg-8">
+        <div class="card p-3">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            Capacity
+
+                        </th>
+                        <th>
+                            IsTaken
+
+                        </th>
+                        <th>
+                            AdultPrice
+
+                        </th>
+                        <th>
+                            ChildrenPrice
+
+                        </th>
+                        <th>
+                            RoomNumber
+
+                        </th>
+                        <th>
+                            RoomType
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Rooms)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Capacity)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.IsTaken)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AdultPrice)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ChildrenPrice)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.RoomNumber)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.RoomType.Type)
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.RoomId">Edit</a> |
+                                <a asp-action="Details" asp-route-id="@item.RoomId">Details</a> |
+                                <a asp-action="Delete" asp-route-id="@item.RoomId">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card p-3">
+            <form method="get">
+                <div class="mb-3">
+                    <label class="form-label">Separated inputs</label>
+                    <div class="row g-2">
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="Search for…" name="search" value="" />
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-icon" aria-label="Button" asp-route-search="">
+
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <circle cx="10" cy="10" r="7" />
+                                    <line x1="21" y1="21" x2="15" y2="15" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    @{
+                                        string check = "";
+                                        if (Model.AvailableOnly)
+                                        {
+                                            check = "checked";
+                                        }
+                                        <input name="availableOnly" type="checkbox" value="true" @check /> <span>Free at present</span>
+                                    }
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+<partial name="_PaginationPartial" model="Model" />

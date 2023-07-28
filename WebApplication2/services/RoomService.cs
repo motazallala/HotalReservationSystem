@@ -37,7 +37,7 @@ namespace WebApplication2.services
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<T>> GetSearchResults<T>(bool availableOnly = false, RoomType[] types = null, int? minCapacity = null)
+        public async Task<IEnumerable<T>> GetSearchResults<T>(bool availableOnly = false/*, int? types = null, int? minCapacity = null*/)
         {
             IQueryable<Room> result = _db.Rooms;
             if (availableOnly)
@@ -46,15 +46,15 @@ namespace WebApplication2.services
                                                                  && y.CheckOut > DateTime.Today));
             }
 
-            if (types != null && (types?.Count() ?? 0) > 0)
-            {
-                result = result.Where(x => types.Contains(x.RoomType));
-            }
+            /* if (types != null && types > 0)
+             {
+                 result = result.Where(x => x.RoomTypeId == types);
+             }
 
-            if (minCapacity != null && minCapacity > 0)
-            {
-                result = result.Where(x => x.Capacity > minCapacity);
-            }
+             if (minCapacity != null && minCapacity > 0)
+             {
+                 result = result.Where(x => x.Capacity > minCapacity);
+             }*/
             return await result.OrderBy(x => x.RoomNumber).ProjectTo<T>(_mapper.ConfigurationProvider).ToListAsync();
         }
 
