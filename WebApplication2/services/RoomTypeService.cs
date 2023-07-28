@@ -56,8 +56,7 @@ namespace WebApplication2.services
 
         public async Task<IEnumerable<RoomType>> GetAllRoomTypes()
         {
-            var result = await _db.RoomTypes.ToListAsync();
-            return result;
+            return await _db.RoomTypes.ToListAsync();
         }
 
         public async Task<IEnumerable<T>> GetAllRoomTypes<T>(string searchText)

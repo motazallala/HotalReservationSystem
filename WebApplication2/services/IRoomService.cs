@@ -4,7 +4,7 @@ namespace WebApplication2.services
 {
     public interface IRoomService
     {
-        Task Add(Room room);
+        Task Add(Room room, List<IFormFile> roomImages);
 
         Task Update(int id, Room room);
 

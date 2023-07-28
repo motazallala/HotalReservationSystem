@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Services.External;
 using WebApplication1.Data;
 using WebApplication2.Data.Model;
 
@@ -10,17 +14,43 @@ namespace WebApplication2.services
     {
         private readonly ApplicationDBContext _db;
         private readonly IMapper _mapper;
+        private readonly IImageManager _imageManager;
 
-        public RoomService(ApplicationDBContext db, IMapper mapper)
+        public RoomService(ApplicationDBContext db, IMapper mapper, IImageManager imageManager)
         {
             _db = db;
             _mapper = mapper;
+            _imageManager = imageManager;
         }
 
-        public Task Add(Room room)
+        public async Task Add(Room room, List<IFormFile> roomImages)
         {
-            throw new NotImplementedException();
+            // Save the new room to the database
+            await _db.Rooms.AddAsync(room);
+            await _db.SaveChangesAsync();
+
+            // Process and add room images
+            if (roomImages != null && roomImages.Any())
+            {
+                foreach (var imageFile in roomImages)
+                {
+                    // Process the image file and save it using Cloudinary
+                    string imageUrl = await _imageManager.UploadImageAsync(imageFile);
+
+                    // Create a new RoomImage object and add it to the room's collection of images
+                    var newImage = new RoomImage
+                    {
+                        ImageUrl = imageUrl,
+                        RoomId = room.RoomId
+                    };
+
+                    // Save the new room image to the database
+                    await _db.RoomImages.AddAsync(newImage);
+                }
+                await _db.SaveChangesAsync();
+            }
         }
+
 
         public Task Update(int id, Room room)
         {
@@ -75,5 +105,6 @@ namespace WebApplication2.services
         {
             throw new NotImplementedException();
         }
+
     }
 }
