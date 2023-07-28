@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication2.Data.Model;
 
@@ -7,66 +9,58 @@ namespace WebApplication2.services
     public class RoomService : IRoomService
     {
         private readonly ApplicationDBContext _db;
+        private readonly IMapper _mapper;
 
-        public RoomService(ApplicationDBContext db)
+        public RoomService(ApplicationDBContext db, IMapper mapper)
         {
             _db = db;
+            _mapper = mapper;
         }
 
-        public async Task Add(Room room)
+        public Task Add(Room room)
         {
-            await _db.Rooms.AddAsync(room);
-            await _db.SaveChangesAsync();
+            throw new NotImplementedException();
         }
 
-        public async Task Delete(int id)
+        public Task Update(int id, Room room)
         {
-            var room = await _db.Rooms
-                .Include(x => x.RoomImages)
-                .Include(x => x.Reservations)
-                .FirstOrDefaultAsync(x => x.RoomId == id);
+            throw new NotImplementedException();
+        }
 
-            if (room != null)
+        public Task Delete(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<Room>> GetAllRoom()
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<T>> GetSearchResults<T>(bool availableOnly = false, RoomType[] types = null, int? minCapacity = null)
+        {
+            IQueryable<Room> result = _db.Rooms;
+            if (availableOnly)
             {
-                // Remove the reservations and their room images if there are any
-                if (room.Reservations != null)
-                {
-                    _db.Reservations.RemoveRange(room.Reservations);
-                }
-
-                if (room.RoomImages != null)
-                {
-                    _db.RoomImages.RemoveRange(room.RoomImages);
-                }
-
-                // Remove the room
-                _db.Rooms.Remove(room);
-
-                // Save all changes using the same _db context instance
-                await _db.SaveChangesAsync();
+                result = result.Where(x => !x.Reservations.Any(y => y.CheckIn <= DateTime.Today
+                                                                 && y.CheckOut > DateTime.Today));
             }
-        }
 
-        public async Task<IEnumerable<Room>> GetAllRoom()
-        {
-            return await _db.Rooms.Include(x => x.Reservations).Include(x => x.RoomImages).ToListAsync();
-        }
-
-        public async Task<Room> GetId(int id)
-        {
-            var data = await _db.Rooms.Where(x => x.RoomId == id).FirstOrDefaultAsync();
-            if (data != null)
+            if (types != null && (types?.Count() ?? 0) > 0)
             {
-                return data;
+                result = result.Where(x => types.Contains(x.RoomType));
             }
-            return null;
+
+            if (minCapacity != null && minCapacity > 0)
+            {
+                result = result.Where(x => x.Capacity > minCapacity);
+            }
+            return await result.OrderBy(x => x.RoomNumber).ProjectTo<T>(_mapper.ConfigurationProvider).ToListAsync();
         }
 
-        public async Task Update(int id, Room room)
+        public Task<Room> GetId(int id)
         {
-            room.RoomId = id;
-            _db.Rooms.Add(room);
-            await _db.SaveChangesAsync();
+            throw new NotImplementedException();
         }
     }
 }

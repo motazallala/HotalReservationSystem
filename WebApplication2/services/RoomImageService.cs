@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication2.Data.Model;
 
@@ -7,10 +9,12 @@ namespace WebApplication2.services
     public class RoomImageService : IRoomImageService
     {
         private readonly ApplicationDBContext _db;
+        private readonly IMapper _mapper;
 
-        public RoomImageService(ApplicationDBContext db)
+        public RoomImageService(ApplicationDBContext db, IMapper mapper)
         {
             _db = db;
+            _mapper = mapper;
         }
 
         public async Task Add(RoomImage roomImage)
@@ -53,7 +57,7 @@ namespace WebApplication2.services
             IQueryable<RoomImage> data = _db.RoomImages;
             data = data.Where(x => x.RoomId == id);
 
-            return null;
+            return await data.ProjectTo<T>(_mapper.ConfigurationProvider).ToListAsync();
         }
     }
 }
