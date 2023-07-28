@@ -12,7 +12,7 @@
 <div class="row row-cards">
     <div class="col-lg-8">
         <div class="card p-3">
-            <table class="table">
+            <table class="table table-bordered table-hover" >
                 <thead>
                     <tr>
                         <th>
@@ -44,7 +44,7 @@
                 <tbody>
                     @foreach (var item in Model.Rooms)
                     {
-                        <tr>
+                        <tr >
                             <td>
                                 @Html.DisplayFor(modelItem => item.Capacity)
                             </td>
@@ -72,6 +72,7 @@
                     }
                 </tbody>
             </table>
+            @*<partial name="_PaginationPartial" model="Model" />*@
         </div>
     </div>
     <div class="col-lg-4">
@@ -108,6 +109,18 @@
                                     }
                                 </label>
                             </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Minimum room capacity</label>
+                            <select name="minCapacity" asp-items="Model.GetCapacitySelectList()" class="form-control">
+                                <option value="">Please Select One of this option</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Room Type</label>
+                            <select name="type" asp-items="Model.GetRoomTypeSelectList()" class="form-control">
+                                <option value="">Please Select One of this option</option>
+                            </select>
                         </div>
                     </div>
                 </div>
