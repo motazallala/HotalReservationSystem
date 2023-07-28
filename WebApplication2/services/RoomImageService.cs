@@ -1,8 +1,6 @@
-﻿using AutoMapper.QueryableExtensions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication2.Data.Model;
-using WebApplication2.services.Mapping;
 
 namespace WebApplication2.services
 {
@@ -55,7 +53,7 @@ namespace WebApplication2.services
             IQueryable<RoomImage> data = _db.RoomImages;
             data = data.Where(x => x.RoomId == id);
 
-            return await data.ProjectTo<T>().ToListAsync();
+            return null;
         }
     }
 }
