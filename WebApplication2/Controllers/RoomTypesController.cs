@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication2.Data.Model;
 using WebApplication2.Models.RoomType;
@@ -20,11 +19,11 @@ namespace WebApplication2.Controllers
         }
 
         // GET: RoomTypes
-        public async Task<IActionResult> Index(int id = 1, int pageSize = 10, string search = "")
+        public async Task<IActionResult> Index(int id = 1, int pageSize = 5, string search = "")
         {
             if (pageSize <= 0)
             {
-                pageSize = 10;
+                pageSize = 5;
             }
             int pageCount = (int)Math.Ceiling((double)_roomTypeService.CountAllRoomType(search) / pageSize);
             if (id > pageCount || id < 1)
@@ -36,7 +35,7 @@ namespace WebApplication2.Controllers
             {
                 CurrentPage = id,
                 PagesCount = pageCount,
-                RoomTypes = await _roomTypeService.GetAllRoomTypesPager<RoomTypeViewModel>(search).GetPageItems(id, pageSize),
+                RoomTypes = await _roomTypeService.GetAllRoomTypes<RoomTypeViewModel>(search).GetPageItems(id, pageSize),
                 Action = nameof(Index),
                 Controller = "RoomTypes",
                 searchString = search,
@@ -45,15 +44,14 @@ namespace WebApplication2.Controllers
         }
 
         // GET: RoomTypes/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null || _context.RoomTypes == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var roomType = await _context.RoomTypes
-                .FirstOrDefaultAsync(m => m.RoomTypeId == id);
+            var roomType = await _roomTypeService.GetRoomType<RoomTypeViewModel>(id);
             if (roomType == null)
             {
                 return NotFound();
@@ -89,14 +87,13 @@ namespace WebApplication2.Controllers
         }
 
         // GET: RoomTypes/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null || _context.RoomTypes == null)
+            if (id == null)
             {
                 return NotFound();
             }
-
-            var roomType = await _context.RoomTypes.FindAsync(id);
+            var roomType = await _roomTypeService.GetRoomType<RoomTypeInput>(id);
             if (roomType == null)
             {
                 return NotFound();
@@ -109,46 +106,36 @@ namespace WebApplication2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("RoomTypeId,Type,Description")] RoomType roomType)
+        public async Task<IActionResult> Edit(int id, RoomTypeInput input)
         {
-            if (id != roomType.RoomTypeId)
+            var uRoomType = await _roomTypeService.GetRoomType<RoomTypeInput>(id);
+            if (uRoomType == null)
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(roomType);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!RoomTypeExists(roomType.RoomTypeId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return View(input);
             }
-            return View(roomType);
+
+            var roomType = new RoomType
+            {
+                Type = input.Type,
+                Description = input.Description,
+            };
+            await _roomTypeService.Update(id, roomType);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: RoomTypes/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null || _context.RoomTypes == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var roomType = await _context.RoomTypes
-                .FirstOrDefaultAsync(m => m.RoomTypeId == id);
+            var roomType = await _roomTypeService.GetRoomType<RoomTypeViewModel>(id);
             if (roomType == null)
             {
                 return NotFound();
@@ -162,17 +149,7 @@ namespace WebApplication2.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.RoomTypes == null)
-            {
-                return Problem("Entity set 'ApplicationDBContext.RoomTypes'  is null.");
-            }
-            var roomType = await _context.RoomTypes.FindAsync(id);
-            if (roomType != null)
-            {
-                _context.RoomTypes.Remove(roomType);
-            }
-
-            await _context.SaveChangesAsync();
+            await _roomTypeService.Delete(id);
             return RedirectToAction(nameof(Index));
         }
 

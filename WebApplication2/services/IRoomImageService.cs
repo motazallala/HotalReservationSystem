@@ -4,9 +4,14 @@ namespace WebApplication2.services
 {
     public interface IRoomImageService
     {
-        Task AddRoomImage(RoomImage roomImage);
-        Task RemoveRoomImage(int roomImageId);
-        Task<List<RoomImage>> GetAllRoomImage(RoomImage roomImage);
-        Task UpdateRoomImage(int roomImageId, RoomImage roomImage);
+        Task Add(RoomImage roomImage);
+
+        Task Remove(int roomImageId);
+
+        Task Update(int roomImageId, RoomImage roomImage);
+
+        Task<List<RoomImage>> GetAllRoomImage();
+
+        Task<IEnumerable<T>> GetRoomImage<T>(int id);
     }
 }

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication2.services;
@@ -23,7 +22,6 @@ namespace WebApplication2.Controllers
             return View(roomImgaes);
         }
 
-
         public async Task<IActionResult> Delete(int? Id)
         {
             if (Id == null)
@@ -41,8 +39,6 @@ namespace WebApplication2.Controllers
             await _db.SaveChangesAsync();
 
             return RedirectToAction(nameof(Delete));
-
         }
-
     }
 }

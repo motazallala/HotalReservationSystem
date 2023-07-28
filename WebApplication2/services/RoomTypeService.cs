@@ -21,9 +21,15 @@ namespace WebApplication2.services
             await _db.SaveChangesAsync();
         }
 
-        public int CountAllRoomType(string searchText)
+        public async Task Update(int id, RoomType roomType)
         {
-            return _db.RoomTypes.Where(x => x.Type.Contains(searchText)).Count();
+            roomType.RoomTypeId = id;
+            var roomTypeToChange = await _db.RoomTypes.AsNoTracking().FirstOrDefaultAsync(e => e.RoomTypeId == id);
+            if (roomTypeToChange != null)
+            {
+                _db.RoomTypes.Update(roomType);
+                _db.SaveChanges();
+            }
         }
 
         public async Task Delete(int id)
@@ -36,13 +42,23 @@ namespace WebApplication2.services
             }
         }
 
+        public int CountAllRoomType()
+        {
+            return _db.RoomTypes.Count();
+        }
+
+        public int CountAllRoomType(string searchText)
+        {
+            return _db.RoomTypes.Where(x => x.Type.Contains(searchText)).Count();
+        }
+
         public async Task<IEnumerable<RoomType>> GetAllRoomTypes()
         {
             var result = await _db.RoomTypes.ToListAsync();
             return result;
         }
 
-        public async Task<IEnumerable<T>> GetAllRoomTypesPager<T>(string searchText)
+        public async Task<IEnumerable<T>> GetAllRoomTypes<T>(string searchText)
         {
             IQueryable<RoomType> data = _db.RoomTypes;
             data = data.Where(x => x.Type.Contains(searchText));
@@ -50,25 +66,9 @@ namespace WebApplication2.services
             return await data.ProjectTo<T>().ToListAsync();
         }
 
-        public async Task<RoomType> GetId(int id)
+        public async Task<T> GetRoomType<T>(int id)
         {
-            var data = await _db.RoomTypes.FirstOrDefaultAsync(x => x.RoomTypeId == id);
-            if (data != null)
-            {
-                return data;
-            }
-            return null;
-        }
-
-        public async Task Update(int id, RoomType roomType)
-        {
-            roomType.RoomTypeId = id;
-            var roomTypeToChange = await _db.RoomTypes.FirstOrDefaultAsync(e => e.RoomTypeId == id);
-            if (roomTypeToChange != null)
-            {
-                _db.RoomTypes.Update(roomTypeToChange);
-                _db.SaveChanges();
-            }
+            return await this._db.RoomTypes.Where(x => x.RoomTypeId == id).ProjectTo<T>().FirstOrDefaultAsync();
         }
     }
 }
