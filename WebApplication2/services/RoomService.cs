@@ -59,9 +59,23 @@ namespace WebApplication2.services
             }
         }
 
-        public Task Delete(int id)
+
+        public async Task Delete(int? id)
         {
-            throw new NotImplementedException();
+            // Retrieve the room from the database
+            var room = await _db.Rooms.FindAsync(id);
+
+            if (room == null)
+            {
+                throw new ArgumentException($"Room with ID {id} not found.");
+            }
+
+            // Remove the room from the database
+            _db.Rooms.Remove(room);
+
+            // Save changes to the database
+            await _db.SaveChangesAsync();
+
         }
 
         public Task<IEnumerable<Room>> GetAllRoom()

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
@@ -173,6 +174,22 @@ namespace WebApplication2.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+        public async Task<IActionResult> Delete(int? id)
+        {
+            // if it null redirect to same page.
+            if (id == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Call the delete service.
+            await _roomService.Delete(id);
+
+            // Save db changes.
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }
