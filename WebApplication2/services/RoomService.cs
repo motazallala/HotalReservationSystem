@@ -60,7 +60,7 @@ namespace WebApplication2.services
         }
 
 
-        public async Task Delete(int? id)
+        public async Task Delete(int id)
         {
             // Retrieve the room from the database
             var room = await _db.Rooms.FindAsync(id);

@@ -175,7 +175,7 @@ namespace WebApplication2.Controllers
 
             return RedirectToAction("Index");
         }
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
             // if it null redirect to same page.
             if (id == null)
