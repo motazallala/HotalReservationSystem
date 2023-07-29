@@ -6,5 +6,6 @@ namespace Services.External
     public interface IImageManager
     {
         public Task<string> UploadImageAsync(IFormFile imageFile);
+
     }
 }
