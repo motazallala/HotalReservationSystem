@@ -56,18 +56,27 @@ namespace WebApplication2.services
         {
             // Update the existing room information
             _db.Rooms.Update(room);
-            await _db.SaveChangesAsync();
 
-            // Process and update room images
+            // Check if there are new images
             if (roomImages != null && roomImages.Any())
             {
-                // Delete existing images
+                // Get the existing images associated with the room
                 var existingImages = await _db.RoomImages.Where(ri => ri.RoomId == room.RoomId).ToListAsync();
-                _db.RoomImages.RemoveRange(existingImages);
 
                 // Process and add new room images
                 foreach (var imageFile in roomImages)
                 {
+                    // Check if the image is an edited image
+                    var editedImage = existingImages.FirstOrDefault(img => img.ImageUrl == imageFile.FileName);
+
+                    if (editedImage != null)
+                    {
+                        // If it's an edited image, remove the existing image from the database
+                        _db.RoomImages.Remove(editedImage);
+                        existingImages.Remove(editedImage);
+                    }
+
+                    // Upload and add the new image to the database
                     string imageUrl = await _imageManager.UploadImageAsync(imageFile);
                     var newImage = new RoomImage
                     {
@@ -76,9 +85,16 @@ namespace WebApplication2.services
                     };
                     _db.RoomImages.Add(newImage);
                 }
+
+                // Save changes to the database for the new images
                 await _db.SaveChangesAsync();
             }
+
+            // Save changes to the database for the room updates
+            await _db.SaveChangesAsync();
         }
+
+
 
         public Task Delete(int id)
         {

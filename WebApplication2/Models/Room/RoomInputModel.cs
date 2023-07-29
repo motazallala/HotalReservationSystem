@@ -11,7 +11,7 @@ namespace WebApplication2.Models.Room
         public double ChildrenPrice { get; set; }
         public int RoomNumber { get; set; }
 
-        public List<IFormFile> RoomImages { get; set; }
+        public List<IFormFile>? RoomImages { get; set; }
         public ICollection<RoomImage>? RoomImagesUrl { get; set; }
         public List<SelectListItem>? RoomTypes { get; set; }
 
