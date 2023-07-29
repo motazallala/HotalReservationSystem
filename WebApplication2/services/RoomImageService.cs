@@ -11,13 +11,13 @@ namespace WebApplication2.services
     {
         private readonly ApplicationDBContext _db;
         private readonly IMapper _mapper;
-        private readonly ImageManager _imageManager;
+        private readonly IImageManager _imageManager;
 
-        public RoomImageService(ApplicationDBContext db, IMapper mapper, ImageManager imageManager)
+        public RoomImageService(ApplicationDBContext db, IMapper mapper, IImageManager imageManager/**/)
         {
             _db = db;
             _mapper = mapper;
-            _imageManager = imageManager;
+            _imageManager = imageManager;/**/
         }
 
         public async Task AddRange(int id, List<IFormFile> roomImages)
