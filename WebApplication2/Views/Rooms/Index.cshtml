@@ -66,7 +66,7 @@
                             <td>
                                 <a asp-action="Edit" asp-route-id="@item.RoomId">Edit</a> |
                                 <a asp-action="Details" asp-route-id="@item.RoomId">Details</a> |
-                                <a asp-action="Delete" asp-route-id="@item.RoomId">Delete</a>
+                                <a asp-action="Delete" data-bs-toggle="modal" data-bs-target="#exampleModal" data-delete-url="@Url.Action("Delete", new { id = item.RoomId })">Delete</a>
                             </td>
                         </tr>
                     }
@@ -130,3 +130,111 @@
     </div>
 </div>
 <partial name="_PaginationPartial" model="Model" />
+
+<div class="modal fade" id="exampleModal" tabindex="-1">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-status bg-danger"></div>
+            <div class="modal-body text-center py-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M12 9v2m0 4v.01" />
+                    <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" />
+                </svg>
+                <h3>Are you sure?</h3>
+                <div class="text-muted">Do you really want to remove the room? What you've done cannot be undone.</div>
+            </div>
+            <div class="modal-footer">
+                <div class="w-100">
+                    <div class="row">
+                        <div class="col">
+                            <a href="#" class="btn w-100" data-bs-dismiss="modal">
+                                Cancel
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="#" id="confirmDeleteButton" class="btn btn-danger w-100" data-bs-dismiss="modal">
+                                Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        // Function to handle the AJAX delete
+        function deleteRoom(url) {
+            // Send a DELETE request to the provided URL
+            fetch(url, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to delete the room.");
+                    }
+                    // Reload the page after successful deletion
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert("An error occurred while deleting the room.");
+                });
+        }
+
+        // Function to show the delete confirmation modal with fade-in animation
+        function showDeleteModal(button) {
+            const deleteUrl = button.dataset.deleteUrl;
+            const confirmDeleteButton = document.getElementById("confirmDeleteButton");
+            confirmDeleteButton.dataset.url = deleteUrl;
+
+            const modalBody = document.querySelector("#exampleModal .modal-body");
+            const modalText = modalBody.querySelector(".text-muted");
+            modalText.innerHTML = `Do you really want to remove this room? This action cannot be undone.`;
+
+            const myModal = new bootstrap.Modal(document.getElementById("exampleModal"));
+            myModal.show();
+        }
+
+        // Add click event listener to the "Delete" button in the modal
+        const deleteButtons = document.querySelectorAll("[data-bs-toggle='modal'][data-bs-target='#exampleModal']");
+        deleteButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                showDeleteModal(button);
+            });
+        });
+
+        // Add click event listener to the "Delete" button in the modal
+        const confirmDeleteButton = document.getElementById("confirmDeleteButton");
+        confirmDeleteButton.addEventListener("click", function () {
+            const deleteUrl = confirmDeleteButton.dataset.url;
+            deleteRoom(deleteUrl);
+        });
+
+        // Function to handle the fade-out animation when the modal is hidden
+        const myModalElement = document.getElementById("exampleModal");
+        myModalElement.addEventListener("hidden.bs.modal", function (event) {
+            // Remove the backdrop element from the DOM
+            const backdrop = document.querySelector(".modal-backdrop");
+            if (backdrop) {
+                backdrop.remove();
+            }
+        });
+    </script>
+}
+
+
+
+
+
+
+

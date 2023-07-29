@@ -8,7 +8,7 @@ namespace WebApplication2.services
 
         Task Update(Room room, List<IFormFile> roomImages);
 
-        Task Delete(int id);
+        Task Delete(int? id);
 
         Task<IEnumerable<Room>> GetAllRoom();
 
