@@ -4,15 +4,17 @@ namespace WebApplication2.services
 {
     public interface IRoomService
     {
-        Task Add(Room room, List<IFormFile> roomImages);
+        public Task Add(Room room, List<IFormFile> roomImages);
 
-        Task Update(Room room, List<IFormFile> roomImages);
+        public Task Update(int id, Room room, List<IFormFile> roomImages);
 
-        Task Delete(int? id);
+        public Task Update(int id, Room room);
 
-        Task<IEnumerable<Room>> GetAllRoom();
+        public Task Delete(int id);
 
-        Task<IEnumerable<T>> GetSearchResults<T>(bool availableOnly = false,
+        public Task<IEnumerable<Room>> GetAllRoom();
+
+        public Task<IEnumerable<T>> GetSearchResults<T>(bool availableOnly = false,
                                             int? minCapacity = null,
                                             int? types = null);
 
@@ -20,6 +22,8 @@ namespace WebApplication2.services
 
         public Task<IEnumerable<T>> GetRoomTypeList<T>();
 
-        Task<Room> GetId(int id);
+        public Task<T> GetId<T>(int id);
+
+        public Task<bool> IsRoomNumberFree(int number, int? roomId = null);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using Services.External;
 using WebApplication1.Data;
 using WebApplication2.Data.Model;
 
@@ -10,16 +11,28 @@ namespace WebApplication2.services
     {
         private readonly ApplicationDBContext _db;
         private readonly IMapper _mapper;
+        private readonly IImageManager _imageManager;
 
-        public RoomImageService(ApplicationDBContext db, IMapper mapper)
+        public RoomImageService(ApplicationDBContext db, IMapper mapper, IImageManager imageManager/**/)
         {
             _db = db;
             _mapper = mapper;
+            _imageManager = imageManager;/**/
         }
 
-        public async Task Add(RoomImage roomImage)
+        public async Task AddRange(int id, List<IFormFile> roomImages)
         {
-            await _db.RoomImages.AddAsync(roomImage);
+            foreach (var imageFile in roomImages)
+            {
+                // Upload and add the new image to the database
+                string imageUrl = await _imageManager.UploadImageAsync(imageFile);
+                var newImage = new RoomImage
+                {
+                    ImageUrl = imageUrl,
+                    RoomId = id
+                };
+                _db.RoomImages.Add(newImage);
+            }
             await _db.SaveChangesAsync();
         }
 

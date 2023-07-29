@@ -4,7 +4,7 @@ using WebApplication2.Data.Model;
 
 namespace WebApplication2.services
 {
-    public class EscortService
+    public class EscortService : IEscortService
     {
         private readonly ApplicationDBContext _db;
 
@@ -12,6 +12,7 @@ namespace WebApplication2.services
         {
             _db = db;
         }
+
         public async Task AddEscort(Escort escort)
         {
             await _db.Escorts.AddAsync(escort);
@@ -22,6 +23,11 @@ namespace WebApplication2.services
         {
             var allEscorts = await _db.Escorts.ToListAsync();
             return allEscorts;
+        }
+
+        public Task<List<Escort>> GetAllEscorts(Escort escort)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task RemoveEscort(int Id)
@@ -46,6 +52,5 @@ namespace WebApplication2.services
                 await _db.SaveChangesAsync();
             }
         }
-
     }
 }

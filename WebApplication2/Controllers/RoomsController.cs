@@ -134,44 +134,46 @@ namespace WebApplication2.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, RoomInputModel viewModel)
+        public async Task<IActionResult> Edit(int id, RoomInputModel viewModel, List<int> imageIds)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                // Retrieve the room from the database
-                var room = await _context.Rooms.Include(r => r.RoomImages).FirstOrDefaultAsync(r => r.RoomId == id);
+                return View(viewModel);
+            }
+            var room = await _roomService.GetId<RoomInputModel>(id);
 
-                if (room == null)
-                {
-                    return NotFound();
-                }
-
-                // Update the room information with the data from the view model
-                room.Capacity = viewModel.Capacity;
-                room.IsTaken = viewModel.IsTaken;
-                room.AdultPrice = viewModel.AdultPrice;
-                room.ChildrenPrice = viewModel.ChildrenPrice;
-                room.RoomNumber = viewModel.RoomNumber;
-
-                // Handle image changes (if the user uploaded new images)
-                if (viewModel.RoomImages != null && viewModel.RoomImages.Any())
-                {
-                    await _roomService.Update(room, viewModel.RoomImages);
-                }
-                else
-                {
-                    // If no new images were uploaded, update the room information only
-                    _context.Rooms.Update(room);
-                }
-
-                await _context.SaveChangesAsync();
-
-                // Redirect to the room list or any other desired page after successful update
-                return RedirectToAction("Index");
+            if (room == null)
+            {
+                return NotFound();
             }
 
-            // If there are any validation errors, display the edit view again with the model
-            return View(viewModel);
+            if (!await _roomService.IsRoomNumberFree(viewModel.RoomNumber, id))
+            {
+                ModelState.AddModelError(nameof(viewModel.RoomNumber), "Number with same Id already exists");
+            }
+
+            var froom = new Room
+            {
+                Capacity = viewModel.Capacity,
+                RoomNumber = viewModel.RoomNumber,
+                ChildrenPrice = viewModel.ChildrenPrice,
+                IsTaken = viewModel.IsTaken,
+                AdultPrice = viewModel.AdultPrice,
+                RoomTypeId = viewModel.RoomTypeId
+            };
+
+            // Handle image changes (if the user uploaded new images)
+            if (viewModel.RoomImages != null && viewModel.RoomImages.Any())
+            {
+                await _roomService.Update(id, froom, viewModel.RoomImages);
+            }
+            else
+            {
+                // If no new images were uploaded, update the room information only
+                await _roomService.Update(id, froom);
+            }
+
+            return RedirectToAction("Index");
         }
         public async Task<IActionResult> Delete(int? id)
         {

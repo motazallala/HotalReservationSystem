@@ -4,14 +4,14 @@ namespace WebApplication2.services
 {
     public interface IReservationsService
     {
-        IEnumerable<RoomType> GetAll();
+        public IEnumerable<RoomType> GetAll();
 
-        RoomType GetId(int id);
+        public RoomType GetId(int id);
 
-        void Add(Reservation reservation);
+        public void Add(Reservation reservation);
 
-        RoomType Update(int id, Reservation reservation);
+        public RoomType Update(int id, Reservation reservation);
 
-        void Delete(int id);
+        public void Delete(int id);
     }
 }
