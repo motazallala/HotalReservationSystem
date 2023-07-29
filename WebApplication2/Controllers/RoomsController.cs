@@ -140,7 +140,7 @@ namespace WebApplication2.Controllers
             {
                 return View(viewModel);
             }
-            var room = await _roomService.GetId<RoomInputModel>(id);
+            var room = await _roomService.GetId<Room>(id);
 
             if (room == null)
             {
