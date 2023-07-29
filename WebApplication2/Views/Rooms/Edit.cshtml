@@ -8,9 +8,10 @@
 
 <h4>Room</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-md-4">
+
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Capacity" class="control-label"></label>
@@ -42,19 +43,7 @@
                 <select asp-for="RoomTypeId" class="form-control" asp-items="@Model.RoomTypes"></select>
                 <span asp-validation-for="RoomTypeId" class="text-danger"></span>
             </div>
-            <!-- Display existing room images and change buttons -->
-            @if (Model.RoomImagesUrl != null && Model.RoomImagesUrl.Any())
-            {
-                <h3>Existing Images</h3>
-                @foreach (var image in Model.RoomImagesUrl)
-                {
-                    <div class="form-group">
-                        <img src="@image.ImageUrl" alt="Room Image" width="200" height="200" />
-                        <label>Change Image</label>
-                        <input type="file" name="roomImages" class="form-control" accept="image/*" />
-                    </div>
-                }
-            }
+ 
 
             <!-- Allow uploading new images -->
             <div class="form-group">
@@ -65,11 +54,48 @@
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
-        </form>
-    </div>
-</div>
 
+        </div>
+    </div>
+    <!-- Display existing room images and change buttons -->
+    @if (Model.RoomImagesUrl != null && Model.RoomImagesUrl.Any())
+    {
+        <h3>Existing Images</h3>
+        <div class="container">
+            <div class="row">
+
+                @foreach (var image in Model.RoomImagesUrl)
+                {
+                    @*                    <div class="form-group">
+            <img src="@image.ImageUrl" alt="Room Image" width="200" height="200" />
+            <label>Change Image</label>
+            <input type="file" name="roomImages" class="form-control" accept="image/*" />
+            </div>*@
+
+
+                    <div class="col">
+                        <div class="card">
+                            <div class="img-responsive img-responsive-21x12 card-img-bottom" style="background-image: url(@image.ImageUrl)"></div>
+
+                            <!-- Card footer -->
+                            <div class="card-footer">
+                                <input type="checkbox" name="imageIds" value="@image.RoomImageId" />delete
+                                <input type="file" name="roomImages" class="form-control"  accept="image/*" />
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</form>
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
+
+
+
+
+
 

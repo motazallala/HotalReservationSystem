@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Services.External;
-using System.Configuration;
 using Web.Common;
 using WebApplication1.Data;
 using WebApplication2.services;
@@ -13,15 +12,24 @@ builder.Services.AddDbContext<ApplicationDBContext>(op =>
 op.UseSqlServer(builder.Configuration.GetConnectionString("myDb"))
 );
 
-builder.Services.AddScoped<IRoomTypeService, RoomTypeService>();
-builder.Services.AddScoped<IReservationsService, ReservationService>();
-builder.Services.AddScoped<IRoomService, RoomService>();
+builder.Services.AddTransient<IRoomTypeService, RoomTypeService>();
+builder.Services.AddTransient<IReservationsService, ReservationService>();
+builder.Services.AddTransient<IRoomService, RoomService>();
+builder.Services.AddTransient<IRoomImageService, RoomImageService>();
+builder.Services.AddTransient<IEscortService, EscortService>();
 
-builder.Services.AddTransient<IImageManager>(x => new ImageManager(builder.Configuration.GetSection("Cloudinary")["CloudName"],
-                                                                      builder.Configuration.GetSection("Cloudinary")["ApiKey"],
-                                                                      builder.Configuration.GetSection("Cloudinary")["ApiSecret"]));
+builder.Services.AddTransient<IImageManager>(x =>
+{
+    var cloudName = builder.Configuration.GetSection("Cloudinary")["CloudName"];
+    var apiKey = builder.Configuration.GetSection("Cloudinary")["ApiKey"];
+    var apiSecret = builder.Configuration.GetSection("Cloudinary")["ApiSecret"];
+
+    return new ImageManager(cloudName, apiKey, apiSecret);
+});
+
 /*MappingConfig.RegisterMappings(AppDomain.CurrentDomain.GetAssemblies());*/
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

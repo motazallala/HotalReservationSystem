@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Services.External;
 using WebApplication1.Data;
 using WebApplication2.Data.Model;
 
@@ -14,87 +10,54 @@ namespace WebApplication2.services
     {
         private readonly ApplicationDBContext _db;
         private readonly IMapper _mapper;
-        private readonly IImageManager _imageManager;
+        private readonly IRoomImageService _roomImageService;
 
-        public RoomService(ApplicationDBContext db, IMapper mapper, IImageManager imageManager)
+        public RoomService(ApplicationDBContext db, IMapper mapper, IRoomImageService roomImageService)
         {
             _db = db;
             _mapper = mapper;
-            _imageManager = imageManager;
+            _roomImageService = roomImageService;
         }
 
         public async Task Add(Room room, List<IFormFile> roomImages)
         {
-            // Save the new room to the database
             await _db.Rooms.AddAsync(room);
             await _db.SaveChangesAsync();
 
-            // Process and add room images
             if (roomImages != null && roomImages.Any())
             {
-                foreach (var imageFile in roomImages)
-                {
-                    // Process the image file and save it using Cloudinary
-                    string imageUrl = await _imageManager.UploadImageAsync(imageFile);
-
-                    // Create a new RoomImage object and add it to the room's collection of images
-                    var newImage = new RoomImage
-                    {
-                        ImageUrl = imageUrl,
-                        RoomId = room.RoomId
-                    };
-
-                    // Save the new room image to the database
-                    await _db.RoomImages.AddAsync(newImage);
-                }
-                await _db.SaveChangesAsync();
+                await _roomImageService.AddRange(room.RoomId, roomImages);
             }
         }
 
-
-        public async Task Update(Room room, List<IFormFile> roomImages)
+        public async Task Update(int id, Room room)
         {
-            // Update the existing room information
-            _db.Rooms.Update(room);
-
-            // Check if there are new images
-            if (roomImages != null && roomImages.Any())
+            room.RoomId = id;
+            var roomToChange = await _db.Rooms.AsNoTracking().FirstOrDefaultAsync(x => x.RoomId == id);
+            if (roomToChange != null)
             {
-                // Get the existing images associated with the room
-                var existingImages = await _db.RoomImages.Where(ri => ri.RoomId == room.RoomId).ToListAsync();
-
-                // Process and add new room images
-                foreach (var imageFile in roomImages)
-                {
-                    // Check if the image is an edited image
-                    var editedImage = existingImages.FirstOrDefault(img => img.ImageUrl == imageFile.FileName);
-
-                    if (editedImage != null)
-                    {
-                        // If it's an edited image, remove the existing image from the database
-                        _db.RoomImages.Remove(editedImage);
-                        existingImages.Remove(editedImage);
-                    }
-
-                    // Upload and add the new image to the database
-                    string imageUrl = await _imageManager.UploadImageAsync(imageFile);
-                    var newImage = new RoomImage
-                    {
-                        ImageUrl = imageUrl,
-                        RoomId = room.RoomId
-                    };
-                    _db.RoomImages.Add(newImage);
-                }
-
-                // Save changes to the database for the new images
+                _db.Rooms.Update(room);
                 await _db.SaveChangesAsync();
             }
-
-            // Save changes to the database for the room updates
-            await _db.SaveChangesAsync();
         }
 
+        public async Task Update(int id, Room room, List<IFormFile> roomImages)
+        {
+            room.RoomId = id;
+            var roomToChange = await _db.Rooms.AsNoTracking().FirstOrDefaultAsync(x => x.RoomId == id);
+            if (roomToChange != null)
+            {
+                // Update the existing room information
+                _db.Rooms.Update(room);
 
+                // Check if there are new images
+                if (roomImages != null && roomImages.Any())
+                {
+                    await _roomImageService.AddRange(room.RoomId, roomImages);
+                }
+                await _db.SaveChangesAsync();
+            }
+        }
 
         public Task Delete(int id)
         {
@@ -140,10 +103,14 @@ namespace WebApplication2.services
             return await _db.RoomTypes.ProjectTo<T>(_mapper.ConfigurationProvider).ToListAsync();
         }
 
-        public Task<Room> GetId(int id)
+        public async Task<T> GetId<T>(int id)
         {
-            throw new NotImplementedException();
+            return await _db.Rooms.Where(x => x.RoomId == id).ProjectTo<T>(_mapper.ConfigurationProvider).FirstOrDefaultAsync();
         }
 
+        public async Task<bool> IsRoomNumberFree(int number, int? roomId = null)
+        {
+            return await _db.Rooms.AsNoTracking().Where(x => x.RoomId != roomId).AnyAsync(x => x.RoomNumber == number);
+        }
     }
 }

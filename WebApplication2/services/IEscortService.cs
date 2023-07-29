@@ -4,9 +4,12 @@ namespace WebApplication2.services
 {
     public interface IEscortService
     {
-        Task AddEscort(Escort escort);
-        Task RemoveEscort(int Id);
-        Task<List<Escort>> GetAllEscorts(Escort escort);
-        Task UpdateEscort(int Id, Escort escort);
+        public Task AddEscort(Escort escort);
+
+        public Task RemoveEscort(int Id);
+
+        public Task<List<Escort>> GetAllEscorts(Escort escort);
+
+        public Task UpdateEscort(int Id, Escort escort);
     }
 }
