@@ -38,11 +38,16 @@ namespace WebApplication2.services
 
         public async Task Remove(int roomImageId)
         {
-            var removeRoomImage = await _db.RoomImages.FirstOrDefaultAsync(u => u.RoomImageId == roomImageId);
-
-            if (removeRoomImage != null)
+            var roomImage = await _db.RoomImages.FindAsync(roomImageId);
+            if (roomImage != null)
             {
-                _db.RoomImages.Remove(removeRoomImage);
+                // Delete the image from Cloudinary
+                await _imageManager.DeleteImageAsync(roomImage.ImageUrl);
+
+                // Remove the image from the database
+                _db.RoomImages.Remove(roomImage);
+
+                // Save changes to the database
                 await _db.SaveChangesAsync();
             }
         }

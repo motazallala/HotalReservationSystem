@@ -63,5 +63,54 @@ namespace Services.External
             // Return the URL of the uploaded image from Cloudinary
             return uploadResult.SecureUrl.ToString();
         }
+
+        public async Task DeleteImageAsync(string publicId)
+        {
+            var cloudinaryAccount = new Account(cloudName, apiKey, apiSecret);
+            Cloudinary cloudinary = new Cloudinary(cloudinaryAccount);
+
+            // Use the Cloudinary API to delete the image using its public ID
+            string getPublicId = GetPublicId(publicId);
+            string newPublicId = "RoomImages/"+getPublicId;
+
+            var deleteParams = new DeletionParams(newPublicId)
+            {
+                Invalidate = true,
+                Type = "upload",
+                ResourceType = ResourceType.Image
+            };
+
+            await cloudinary.DestroyAsync(deleteParams);
+        }
+
+        public string GetPublicId(string imageUrl)
+        {
+            if (string.IsNullOrEmpty(imageUrl))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.", nameof(imageUrl));
+            }
+
+            // Find the last occurrence of '/'
+            int lastSlashIndex = imageUrl.LastIndexOf('/');
+            if (lastSlashIndex == -1 || lastSlashIndex >= imageUrl.Length - 1)
+            {
+                throw new ArgumentException("Invalid image URL.", nameof(imageUrl));
+            }
+
+            // Get the substring after the last '/'
+            string publicIdWithFormat = imageUrl.Substring(lastSlashIndex + 1);
+
+            // Find the last occurrence of '.' to remove the file extension
+            int lastDotIndex = publicIdWithFormat.LastIndexOf('.');
+            if (lastDotIndex == -1 || lastDotIndex == 0)
+            {
+                throw new ArgumentException("Invalid image URL.", nameof(imageUrl));
+            }
+
+            // Get the substring before the last '.' to get the public ID
+            string publicId = publicIdWithFormat.Substring(0, lastDotIndex);
+
+            return publicId;
+        }
     }
 }

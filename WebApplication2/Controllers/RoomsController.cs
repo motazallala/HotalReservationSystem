@@ -16,12 +16,14 @@ namespace WebApplication2.Controllers
         private readonly ApplicationDBContext _context;
         private readonly IRoomService _roomService;
         private readonly IRoomTypeService _roomTypeService;
+        private readonly IRoomImageService _roomImageService;
 
-        public RoomsController(ApplicationDBContext context, IRoomService roomService, IRoomTypeService roomTypeService)
+        public RoomsController(ApplicationDBContext context, IRoomService roomService, IRoomTypeService roomTypeService, IRoomImageService roomImageService)
         {
             _context = context;
             _roomService = roomService;
             _roomTypeService = roomTypeService;
+            _roomImageService = roomImageService;
         }
 
         public async Task<IActionResult> Index(int id = 1, int pageSize = 5, bool availableOnly = false, int minCapacity = 0, int? type = null)
@@ -171,6 +173,15 @@ namespace WebApplication2.Controllers
             {
                 // If no new images were uploaded, update the room information only
                 await _roomService.Update(id, froom);
+            }
+
+            if (imageIds != null && imageIds.Any())
+            {
+                foreach (var imageId in imageIds)
+                {
+                    // Use the IRoomImageService to delete the image by its ID
+                    await _roomImageService.Remove(imageId);
+                }
             }
 
             return RedirectToAction("Index");
