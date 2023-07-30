@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication2.Areas.Identity.Data;
 
@@ -11,9 +12,11 @@ using WebApplication2.Areas.Identity.Data;
 namespace WebApplication2.Migrations
 {
     [DbContext(typeof(WebApplication2DBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230730133600_InitIdentiy")]
+    partial class InitIdentiy
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -251,7 +254,7 @@ namespace WebApplication2.Migrations
 
                     b.HasIndex("ReservationId");
 
-                    b.ToTable("Escorts", (string)null);
+                    b.ToTable("Escorts");
                 });
 
             modelBuilder.Entity("WebApplication2.Data.Model.Reservation", b =>
@@ -313,7 +316,7 @@ namespace WebApplication2.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("Reservations", (string)null);
+                    b.ToTable("Reservations");
                 });
 
             modelBuilder.Entity("WebApplication2.Data.Model.Room", b =>
@@ -346,7 +349,7 @@ namespace WebApplication2.Migrations
 
                     b.HasIndex("RoomTypeId");
 
-                    b.ToTable("Rooms", (string)null);
+                    b.ToTable("Rooms");
                 });
 
             modelBuilder.Entity("WebApplication2.Data.Model.RoomImage", b =>
@@ -368,7 +371,7 @@ namespace WebApplication2.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("RoomImages", (string)null);
+                    b.ToTable("RoomImages");
                 });
 
             modelBuilder.Entity("WebApplication2.Data.Model.RoomType", b =>
@@ -389,7 +392,7 @@ namespace WebApplication2.Migrations
 
                     b.HasKey("RoomTypeId");
 
-                    b.ToTable("RoomTypes", (string)null);
+                    b.ToTable("RoomTypes");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

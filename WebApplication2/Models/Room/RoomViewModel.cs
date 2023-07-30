@@ -1,4 +1,5 @@
-﻿using WebApplication2.Models.Reservation;
+﻿using WebApplication2.Data.Model;
+using WebApplication2.Models.Reservation;
 using WebApplication2.Models.RoomType;
 
 namespace WebApplication2.Models.Room
@@ -18,7 +19,8 @@ namespace WebApplication2.Models.Room
         public RoomTypeViewModel RoomType { get; set; }
 
         // One-to-many relationship: One Room has many RoomImages
-        public ICollection<RoomViewModel> RoomImages { get; set; }
+        // Edit from <RoomViewModel> to <RoomImage>
+        public ICollection<RoomImage> RoomImages { get; set; }
 
         // One-to-many relationship: One Room has many Reservations
         public ICollection<ReservationViewModel> Reservations { get; set; }

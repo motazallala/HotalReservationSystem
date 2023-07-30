@@ -1,4 +1,5 @@
 ﻿using WebApplication2.Data.Model;
+using WebApplication2.Models.Room;
 
 namespace WebApplication2.services
 {

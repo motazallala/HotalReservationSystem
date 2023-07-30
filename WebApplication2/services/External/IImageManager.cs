@@ -5,9 +5,9 @@ namespace Services.External
 {
     public interface IImageManager
     {
-        Task<string> UploadImageAsync(IFormFile imageFile);
-        Task DeleteImageAsync(string publicId);
-        string GetPublicId(string publicId);
+        public Task<string> UploadImageAsync(IFormFile imageFile);
+        public Task DeleteImageAsync(string publicId);
+        public string GetPublicId(string publicId);
 
     }
 }

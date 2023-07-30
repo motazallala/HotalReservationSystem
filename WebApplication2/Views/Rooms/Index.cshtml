@@ -64,9 +64,9 @@
                                 @Html.DisplayFor(modelItem => item.RoomType.Type)
                             </td>
                             <td>
-                                <a asp-action="Edit" asp-route-id="@item.RoomId">Edit</a> |
-                                <a asp-action="Details" asp-route-id="@item.RoomId">Details</a> |
-                                <a asp-action="Delete" data-bs-toggle="modal" data-bs-target="#exampleModal" data-delete-url="@Url.Action("Delete", new { id = item.RoomId })">Delete</a>
+                                <a asp-action="Edit" asp-route-id="@item.RoomId" class="btn btn-warning btn-icon btn-sm" aria-label="Button">Edit</a>
+                                <a asp-action="Details" asp-route-id="@item.RoomId" class="btn btn-info btn-icon btn-sm" aria-label="Button">Details</a>
+                                <a asp-action="Delete" class="btn btn-danger btn-icon btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal" aria-label="Button" data-delete-url="@Url.Action("Delete", new { id = item.RoomId })">Delete</a>
                             </td>
                         </tr>
                     }

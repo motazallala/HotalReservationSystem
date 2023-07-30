@@ -1,13 +1,13 @@
-﻿using WebApplication1.Data;
+﻿using WebApplication2.Areas.Identity.Data;
 using WebApplication2.Data.Model;
 
 namespace WebApplication2.services
 {
     public class ReservationService : IReservationsService
     {
-        private readonly ApplicationDBContext _db;
+        private readonly WebApplication2DBContext _db;
 
-        public ReservationService(ApplicationDBContext db)
+        public ReservationService(WebApplication2DBContext db)
         {
             _db = db;
         }

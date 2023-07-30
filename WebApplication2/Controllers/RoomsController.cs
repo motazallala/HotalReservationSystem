@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Data;
+using WebApplication2.Areas.Identity.Data;
 using WebApplication2.Data.Model;
 using WebApplication2.Models.Room;
 using WebApplication2.Models.RoomType;
@@ -11,14 +12,15 @@ using WebApplication2.services.Common;
 
 namespace WebApplication2.Controllers
 {
+    [Authorize]
     public class RoomsController : Controller
     {
-        private readonly ApplicationDBContext _context;
+        private readonly WebApplication2DBContext _context;
         private readonly IRoomService _roomService;
         private readonly IRoomTypeService _roomTypeService;
         private readonly IRoomImageService _roomImageService;
 
-        public RoomsController(ApplicationDBContext context, IRoomService roomService, IRoomTypeService roomTypeService, IRoomImageService roomImageService)
+        public RoomsController(WebApplication2DBContext context, IRoomService roomService, IRoomTypeService roomTypeService, IRoomImageService roomImageService)
         {
             _context = context;
             _roomService = roomService;
@@ -201,6 +203,19 @@ namespace WebApplication2.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            // Retrieve the room details using the RoomService
+            var room = await _roomService.GetId<RoomViewModel>(id);
+
+            if (room == null)
+            {
+                return NotFound(); // Room not found, handle this case in the view
+            }
+
+            return View(room);
         }
     }
 }
