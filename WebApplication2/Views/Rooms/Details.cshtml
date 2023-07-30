@@ -1,0 +1,67 @@
+﻿@model WebApplication2.Models.Room.RoomViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Room Details</h1>
+
+<div>
+    <h4>Room</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Capacity)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Capacity)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AdultPrice)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AdultPrice)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ChildrenPrice)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ChildrenPrice)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RoomNumber)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RoomNumber)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RoomType)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RoomType.Type)
+        </dd>
+    </dl>
+    <div>
+        <h4>Room Images</h4>
+        <hr />
+        <div class="row">
+            @if (Model.RoomImages != null && Model.RoomImages.Any())
+            {
+                @foreach (var image in Model.RoomImages)
+                {
+                    <div class="col-md-3">
+                        <img src="@image.ImageUrl" alt="Room Image" class="img-thumbnail" />
+                    </div>
+                }
+            }
+            else
+            {
+                <p>No room images available.</p>
+            }
+        </div>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

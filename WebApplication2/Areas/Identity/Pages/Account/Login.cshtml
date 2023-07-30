@@ -1,0 +1,72 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Sign in - Tabler - Premium and Open Source dashboard template with responsive and high quality UI.</title>
+    <!-- CSS files -->
+    <link href="~/dist/css/tabler.min.css?1684106062" rel="stylesheet" />
+    <link href="~/dist/css/tabler-flags.min.css?1684106062" rel="stylesheet" />
+    <link href="~/dist/css/tabler-payments.min.css?1684106062" rel="stylesheet" />
+    <link href="~/dist/css/tabler-vendors.min.css?1684106062" rel="stylesheet" />
+    <link href="~/dist/css/demo.min.css?1684106062" rel="stylesheet" />
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <style>
+        :root {
+            --tblr-font-sans-serif: 'Inter Var', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+        }
+
+        body {
+            font-feature-settings: "cv03", "cv04", "cv11";
+        }
+    </style>
+</head>
+<body class=" d-flex flex-column">
+    <script src="./dist/js/demo-theme.min.js?1684106062"></script>
+    <div class="page page-center">
+        <div class="container container-tight py-4">
+            <div class="text-center">
+                <a href="." class="navbar-brand navbar-brand-autodark"><img src="./static/logo.svg" height="36" alt=""></a>
+            </div>
+            <div class="card card-md">
+                <div class="card-body">
+                    <h2 class="h2 text-center mb-4">Login to your account</h2>
+                    <form id="account" method="post" autocomplete="off">
+                        <div class="mb-3">
+                            <label asp-for="Input.Email" class="form-label"></label>
+                            <input type="email" asp-for="Input.Email" class="form-control" placeholder="your@email.com" autocomplete="off">
+                        </div>              <div class="mb-3">
+                            <label asp-for="Input.Password" class="form-label"></label>
+                            <input type="password" asp-for="Input.Password" class="form-control" placeholder="your@email.com" autocomplete="off">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-check">
+                                <input asp-for="Input.RememberMe" type="checkbox" class="form-check-input" />
+                                <span class="form-check-label">Remember me on this device</span>
+                            </label>
+                        </div>
+                        <div class="form-footer">
+                            <button type="submit" class="btn btn-primary w-100">Sign in</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Libs JS -->
+        <script src="./dist/js/tabler.min.js?1684106062" defer></script>
+        <script src="./dist/js/demo.min.js?1684106062" defer></script>
+</body>
+</html>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 
 using WebApplication2.Data.Model;
+using WebApplication2.Models.Escort;
+using WebApplication2.Models.Reservation;
+using WebApplication2.Models.Room;
 using WebApplication2.Models.RoomType;
 
 /// <summary>
@@ -20,6 +23,18 @@ namespace Web.Common
 
             CreateMap<RoomTypeViewModel, RoomType>();
             CreateMap<RoomType, RoomTypeViewModel>();
+
+            CreateMap<RoomInputModel, Room>();
+            CreateMap<Room, RoomInputModel>();
+
+            CreateMap<RoomViewModel, Room>();
+            CreateMap<Room, RoomViewModel>();
+
+            CreateMap<RoomImage, RoomViewModel>();
+            CreateMap<Reservation, ReservationViewModel>();
+
+            CreateMap<Escort, EscortViewModel>();
+            CreateMap<Room, Room>();
         }
     }
 }

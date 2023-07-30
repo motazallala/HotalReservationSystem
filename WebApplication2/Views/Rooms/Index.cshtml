@@ -1,0 +1,240 @@
+﻿@model WebApplication2.Models.Room.RoomIndexVirwModel
+
+@{
+    ViewData["Title"] = "View";
+}
+
+<h1>View</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<div class="row row-cards">
+    <div class="col-lg-8">
+        <div class="card p-3">
+            <table class="table table-bordered table-hover" >
+                <thead>
+                    <tr>
+                        <th>
+                            Capacity
+
+                        </th>
+                        <th>
+                            IsTaken
+
+                        </th>
+                        <th>
+                            AdultPrice
+
+                        </th>
+                        <th>
+                            ChildrenPrice
+
+                        </th>
+                        <th>
+                            RoomNumber
+
+                        </th>
+                        <th>
+                            RoomType
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Rooms)
+                    {
+                        <tr >
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Capacity)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.IsTaken)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AdultPrice)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ChildrenPrice)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.RoomNumber)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.RoomType.Type)
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.RoomId" class="btn btn-warning btn-icon btn-sm" aria-label="Button">Edit</a>
+                                <a asp-action="Details" asp-route-id="@item.RoomId" class="btn btn-info btn-icon btn-sm" aria-label="Button">Details</a>
+                                <a asp-action="Delete" class="btn btn-danger btn-icon btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal" aria-label="Button" data-delete-url="@Url.Action("Delete", new { id = item.RoomId })">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            @*<partial name="_PaginationPartial" model="Model" />*@
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card p-3">
+            <form method="get">
+                <div class="mb-3">
+                    <label class="form-label">Separated inputs</label>
+                    <div class="row g-2">
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="Search for…" name="search" value="" />
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-icon" aria-label="Button" asp-route-search="">
+
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <circle cx="10" cy="10" r="7" />
+                                    <line x1="21" y1="21" x2="15" y2="15" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    @{
+                                        string check = "";
+                                        if (Model.AvailableOnly)
+                                        {
+                                            check = "checked";
+                                        }
+                                        <input name="availableOnly" type="checkbox" value="true" @check /> <span>Free at present</span>
+                                    }
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Minimum room capacity</label>
+                            <select name="minCapacity" asp-items="Model.GetCapacitySelectList()" class="form-control">
+                                <option value="">Please Select One of this option</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Room Type</label>
+                            <select name="type" asp-items="Model.GetRoomTypeSelectList()" class="form-control">
+                                <option value="">Please Select One of this option</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+<partial name="_PaginationPartial" model="Model" />
+
+<div class="modal fade" id="exampleModal" tabindex="-1">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-status bg-danger"></div>
+            <div class="modal-body text-center py-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M12 9v2m0 4v.01" />
+                    <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" />
+                </svg>
+                <h3>Are you sure?</h3>
+                <div class="text-muted">Do you really want to remove the room? What you've done cannot be undone.</div>
+            </div>
+            <div class="modal-footer">
+                <div class="w-100">
+                    <div class="row">
+                        <div class="col">
+                            <a href="#" class="btn w-100" data-bs-dismiss="modal">
+                                Cancel
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="#" id="confirmDeleteButton" class="btn btn-danger w-100" data-bs-dismiss="modal">
+                                Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        // Function to handle the AJAX delete
+        function deleteRoom(url) {
+            // Send a DELETE request to the provided URL
+            fetch(url, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to delete the room.");
+                    }
+                    // Reload the page after successful deletion
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert("An error occurred while deleting the room.");
+                });
+        }
+
+        // Function to show the delete confirmation modal with fade-in animation
+        function showDeleteModal(button) {
+            const deleteUrl = button.dataset.deleteUrl;
+            const confirmDeleteButton = document.getElementById("confirmDeleteButton");
+            confirmDeleteButton.dataset.url = deleteUrl;
+
+            const modalBody = document.querySelector("#exampleModal .modal-body");
+            const modalText = modalBody.querySelector(".text-muted");
+            modalText.innerHTML = `Do you really want to remove this room? This action cannot be undone.`;
+
+            const myModal = new bootstrap.Modal(document.getElementById("exampleModal"));
+            myModal.show();
+        }
+
+        // Add click event listener to the "Delete" button in the modal
+        const deleteButtons = document.querySelectorAll("[data-bs-toggle='modal'][data-bs-target='#exampleModal']");
+        deleteButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                showDeleteModal(button);
+            });
+        });
+
+        // Add click event listener to the "Delete" button in the modal
+        const confirmDeleteButton = document.getElementById("confirmDeleteButton");
+        confirmDeleteButton.addEventListener("click", function () {
+            const deleteUrl = confirmDeleteButton.dataset.url;
+            deleteRoom(deleteUrl);
+        });
+
+        // Function to handle the fade-out animation when the modal is hidden
+        const myModalElement = document.getElementById("exampleModal");
+        myModalElement.addEventListener("hidden.bs.modal", function (event) {
+            // Remove the backdrop element from the DOM
+            const backdrop = document.querySelector(".modal-backdrop");
+            if (backdrop) {
+                backdrop.remove();
+            }
+        });
+    </script>
+}
+
+
+
+
+
+
+

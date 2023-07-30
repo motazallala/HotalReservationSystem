@@ -1,33 +1,53 @@
-﻿using AutoMapper.QueryableExtensions;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Data;
+using Services.External;
+using WebApplication2.Areas.Identity.Data;
 using WebApplication2.Data.Model;
-using WebApplication2.services.Mapping;
 
 namespace WebApplication2.services
 {
     public class RoomImageService : IRoomImageService
     {
-        private readonly ApplicationDBContext _db;
+        private readonly WebApplication2DBContext _db;
+        private readonly IMapper _mapper;
+        private readonly IImageManager _imageManager;
 
-        public RoomImageService(ApplicationDBContext db)
+        public RoomImageService(WebApplication2DBContext db, IMapper mapper, IImageManager imageManager/**/)
         {
             _db = db;
+            _mapper = mapper;
+            _imageManager = imageManager;/**/
         }
 
-        public async Task Add(RoomImage roomImage)
+        public async Task AddRange(int id, List<IFormFile> roomImages)
         {
-            await _db.RoomImages.AddAsync(roomImage);
+            foreach (var imageFile in roomImages)
+            {
+                // Upload and add the new image to the database
+                string imageUrl = await _imageManager.UploadImageAsync(imageFile);
+                var newImage = new RoomImage
+                {
+                    ImageUrl = imageUrl,
+                    RoomId = id
+                };
+                _db.RoomImages.Add(newImage);
+            }
             await _db.SaveChangesAsync();
         }
 
         public async Task Remove(int roomImageId)
         {
-            var removeRoomImage = await _db.RoomImages.FirstOrDefaultAsync(u => u.RoomImageId == roomImageId);
-
-            if (removeRoomImage != null)
+            var roomImage = await _db.RoomImages.FindAsync(roomImageId);
+            if (roomImage != null)
             {
-                _db.RoomImages.Remove(removeRoomImage);
+                // Delete the image from Cloudinary
+                await _imageManager.DeleteImageAsync(roomImage.ImageUrl);
+
+                // Remove the image from the database
+                _db.RoomImages.Remove(roomImage);
+
+                // Save changes to the database
                 await _db.SaveChangesAsync();
             }
         }
@@ -55,7 +75,7 @@ namespace WebApplication2.services
             IQueryable<RoomImage> data = _db.RoomImages;
             data = data.Where(x => x.RoomId == id);
 
-            return await data.ProjectTo<T>().ToListAsync();
+            return await data.ProjectTo<T>(_mapper.ConfigurationProvider).ToListAsync();
         }
     }
 }

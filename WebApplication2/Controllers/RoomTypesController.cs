@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using WebApplication1.Data;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using WebApplication2.Areas.Identity.Data;
 using WebApplication2.Data.Model;
 using WebApplication2.Models.RoomType;
 using WebApplication2.services;
@@ -7,12 +8,13 @@ using WebApplication2.services.Common;
 
 namespace WebApplication2.Controllers
 {
+    [Authorize]
     public class RoomTypesController : Controller
     {
-        private readonly ApplicationDBContext _context;
+        private readonly WebApplication2DBContext _context;
         private readonly IRoomTypeService _roomTypeService;
 
-        public RoomTypesController(ApplicationDBContext context, IRoomTypeService roomTypeService)
+        public RoomTypesController(WebApplication2DBContext context, IRoomTypeService roomTypeService)
         {
             _context = context;
             _roomTypeService = roomTypeService;

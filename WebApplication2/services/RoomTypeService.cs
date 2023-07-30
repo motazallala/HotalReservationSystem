@@ -1,18 +1,20 @@
-﻿using AutoMapper.QueryableExtensions;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Data;
+using WebApplication2.Areas.Identity.Data;
 using WebApplication2.Data.Model;
-using WebApplication2.services.Mapping;
 
 namespace WebApplication2.services
 {
     public class RoomTypeService : IRoomTypeService
     {
-        private readonly ApplicationDBContext _db;
+        private readonly WebApplication2DBContext _db;
+        private readonly IMapper _mapper;
 
-        public RoomTypeService(ApplicationDBContext db)
+        public RoomTypeService(WebApplication2DBContext db, IMapper mapper)
         {
             _db = db;
+            _mapper = mapper;
         }
 
         public async Task Add(RoomType roomType)
@@ -54,8 +56,7 @@ namespace WebApplication2.services
 
         public async Task<IEnumerable<RoomType>> GetAllRoomTypes()
         {
-            var result = await _db.RoomTypes.ToListAsync();
-            return result;
+            return await _db.RoomTypes.ToListAsync();
         }
 
         public async Task<IEnumerable<T>> GetAllRoomTypes<T>(string searchText)
@@ -63,12 +64,12 @@ namespace WebApplication2.services
             IQueryable<RoomType> data = _db.RoomTypes;
             data = data.Where(x => x.Type.Contains(searchText));
 
-            return await data.ProjectTo<T>().ToListAsync();
+            return await data.ProjectTo<T>(_mapper.ConfigurationProvider).ToListAsync();
         }
 
         public async Task<T> GetRoomType<T>(int id)
         {
-            return await this._db.RoomTypes.Where(x => x.RoomTypeId == id).ProjectTo<T>().FirstOrDefaultAsync();
+            return await this._db.RoomTypes.Where(x => x.RoomTypeId == id).ProjectTo<T>(_mapper.ConfigurationProvider).FirstOrDefaultAsync();
         }
     }
 }
