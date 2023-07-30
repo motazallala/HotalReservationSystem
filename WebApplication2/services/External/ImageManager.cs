@@ -42,7 +42,6 @@ namespace Services.External
             // Reset the position of the memory stream to the beginning
             stream.Position = 0;
 
-            // Make sure to create Folder in "Cloudinary" website.
             var uploadParams = new ImageUploadParams
             {
                 File = new FileDescription(imageName, stream),

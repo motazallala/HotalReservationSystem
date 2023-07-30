@@ -1,17 +1,17 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Data;
+using WebApplication2.Areas.Identity.Data;
 using WebApplication2.Data.Model;
 
 namespace WebApplication2.services
 {
     public class RoomTypeService : IRoomTypeService
     {
-        private readonly ApplicationDBContext _db;
+        private readonly WebApplication2DBContext _db;
         private readonly IMapper _mapper;
 
-        public RoomTypeService(ApplicationDBContext db, IMapper mapper)
+        public RoomTypeService(WebApplication2DBContext db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;

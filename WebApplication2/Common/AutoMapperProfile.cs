@@ -29,8 +29,10 @@ namespace Web.Common
 
             CreateMap<RoomViewModel, Room>();
             CreateMap<Room, RoomViewModel>();
+
             CreateMap<RoomImage, RoomViewModel>();
             CreateMap<Reservation, ReservationViewModel>();
+
             CreateMap<Escort, EscortViewModel>();
             CreateMap<Room, Room>();
         }

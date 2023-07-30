@@ -1,16 +1,25 @@
 using Microsoft.EntityFrameworkCore;
 using Services.External;
 using Web.Common;
-using WebApplication1.Data;
+
 using WebApplication2.services;
+using Microsoft.AspNetCore.Identity;
+using WebApplication2.Data;
+using WebApplication2.Areas.Identity.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("WebApplication2ContextConnection") ?? throw new InvalidOperationException("Connection string 'WebApplication2ContextConnection' not found.");
+
+builder.Services.AddDbContext<WebApplication2DBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("myDb")));
+
+builder.Services.AddDefaultIdentity<WebApplication2Admin>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<WebApplication2DBContext>();
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<ApplicationDBContext>(op =>
+/*builder.Services.AddDbContext<ApplicationDBContext>(op =>
 op.UseSqlServer(builder.Configuration.GetConnectionString("myDb"))
-);
+);*/
 
 builder.Services.AddScoped<IRoomTypeService, RoomTypeService>();
 builder.Services.AddScoped<IReservationsService, ReservationService>();
@@ -42,6 +51,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.MapRazorPages();
 
 app.MapControllerRoute(
     name: "default",

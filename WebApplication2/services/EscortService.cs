@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebApplication1.Data;
+using WebApplication2.Areas.Identity.Data;
 using WebApplication2.Data.Model;
 
 namespace WebApplication2.services
 {
     public class EscortService : IEscortService
     {
-        private readonly ApplicationDBContext _db;
+        private readonly WebApplication2DBContext _db;
 
-        public EscortService(ApplicationDBContext db)
+        public EscortService(WebApplication2DBContext db)
         {
             _db = db;
         }

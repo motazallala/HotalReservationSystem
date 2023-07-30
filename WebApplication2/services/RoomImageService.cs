@@ -2,18 +2,18 @@
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using Services.External;
-using WebApplication1.Data;
+using WebApplication2.Areas.Identity.Data;
 using WebApplication2.Data.Model;
 
 namespace WebApplication2.services
 {
     public class RoomImageService : IRoomImageService
     {
-        private readonly ApplicationDBContext _db;
+        private readonly WebApplication2DBContext _db;
         private readonly IMapper _mapper;
         private readonly IImageManager _imageManager;
 
-        public RoomImageService(ApplicationDBContext db, IMapper mapper, IImageManager imageManager/**/)
+        public RoomImageService(WebApplication2DBContext db, IMapper mapper, IImageManager imageManager/**/)
         {
             _db = db;
             _mapper = mapper;

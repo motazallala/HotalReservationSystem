@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿/*using Microsoft.EntityFrameworkCore;
 using WebApplication2.Data.Model;
 
 namespace WebApplication1.Data
@@ -59,9 +59,9 @@ namespace WebApplication1.Data
                 entity.HasKey(e => e.RoomTypeId);
                 entity.Property(e => e.RoomTypeId).ValueGeneratedOnAdd();
                 entity.Property(e => e.Type).IsRequired();
-                /* entity.Property(e => e.Price).IsRequired();*/
+                entity.Property(e => e.Price).IsRequired();
             });
             base.OnModelCreating(modelBuilder);
         }
     }
-}
+}*/
