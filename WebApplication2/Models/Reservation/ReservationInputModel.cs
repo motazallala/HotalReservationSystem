@@ -1,8 +1,9 @@
-﻿namespace WebApplication2.Data.Model
+﻿using WebApplication2.Models.Escort;
+
+namespace WebApplication2.Models.Reservation
 {
-    public class Reservation
+    public class ReservationInputModel
     {
-        public int ReservationId { get; set; }
         public string FullName { get; set; }
         public string Nationality { get; set; }
         public string NationalityId { get; set; }
@@ -21,9 +22,6 @@
         // Foreign key for Room
         public int RoomId { get; set; }
 
-        public Room Room { get; set; }
-
-        // One-to-many relationship: One Reservation has many Escorts
-        public ICollection<Escort> Escorts { get; set; }
+        public ICollection<EscortViewModel> Escorts { get; set; }
     }
 }

@@ -8,7 +8,6 @@ namespace WebApplication2.Models.Room
     {
         public int RoomId { get; set; }
         public int Capacity { get; set; }
-        public bool IsTaken { get; set; }
         public double AdultPrice { get; set; }
         public double ChildrenPrice { get; set; }
         public int RoomNumber { get; set; }

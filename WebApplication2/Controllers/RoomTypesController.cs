@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebApplication2.Areas.Identity.Data;
+using WebApplication2.Data;
 using WebApplication2.Data.Model;
 using WebApplication2.Models.RoomType;
 using WebApplication2.services;

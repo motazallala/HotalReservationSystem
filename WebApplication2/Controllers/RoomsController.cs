@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using WebApplication2.Areas.Identity.Data;
+using WebApplication2.Data;
 using WebApplication2.Data.Model;
 using WebApplication2.Models.Room;
 using WebApplication2.Models.RoomType;
@@ -85,7 +84,6 @@ namespace WebApplication2.Controllers
                 var room = new Room
                 {
                     Capacity = model.Capacity,
-                    IsTaken = model.IsTaken,
                     AdultPrice = model.AdultPrice,
                     ChildrenPrice = model.ChildrenPrice,
                     RoomNumber = model.RoomNumber,
@@ -117,7 +115,6 @@ namespace WebApplication2.Controllers
             var viewModel = new RoomInputModel
             {
                 Capacity = room.Capacity,
-                IsTaken = room.IsTaken,
                 AdultPrice = room.AdultPrice,
                 ChildrenPrice = room.ChildrenPrice,
                 RoomNumber = room.RoomNumber,
@@ -161,7 +158,6 @@ namespace WebApplication2.Controllers
                 Capacity = viewModel.Capacity,
                 RoomNumber = viewModel.RoomNumber,
                 ChildrenPrice = viewModel.ChildrenPrice,
-                IsTaken = viewModel.IsTaken,
                 AdultPrice = viewModel.AdultPrice,
                 RoomTypeId = viewModel.RoomTypeId
             };
@@ -188,6 +184,7 @@ namespace WebApplication2.Controllers
 
             return RedirectToAction("Index");
         }
+
         public async Task<IActionResult> Delete(int id)
         {
             // if it null redirect to same page.

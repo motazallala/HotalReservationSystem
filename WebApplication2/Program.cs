@@ -5,7 +5,6 @@ using Web.Common;
 using WebApplication2.services;
 using Microsoft.AspNetCore.Identity;
 using WebApplication2.Data;
-using WebApplication2.Areas.Identity.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("WebApplication2ContextConnection") ?? throw new InvalidOperationException("Connection string 'WebApplication2ContextConnection' not found.");
@@ -13,7 +12,6 @@ var connectionString = builder.Configuration.GetConnectionString("WebApplication
 builder.Services.AddDbContext<WebApplication2DBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("myDb")));
 
 builder.Services.AddDefaultIdentity<WebApplication2Admin>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<WebApplication2DBContext>();
-
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

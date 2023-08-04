@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using WebApplication2.Areas.Identity.Data;
 using WebApplication2.Data.Model;
 
-namespace WebApplication2.Areas.Identity.Data;
+namespace WebApplication2.Data;
 
 public class WebApplication2DBContext : IdentityDbContext<WebApplication2Admin>
 {

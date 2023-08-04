@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
-using WebApplication2.Areas.Identity.Data;
+using WebApplication2.Data;
 using WebApplication2.Data.Model;
 using WebApplication2.Models.Room;
 
@@ -60,7 +60,6 @@ namespace WebApplication2.services
             }
         }
 
-
         public async Task Delete(int id)
         {
             // Retrieve the room from the database
@@ -76,7 +75,6 @@ namespace WebApplication2.services
 
             // Save changes to the database
             await _db.SaveChangesAsync();
-
         }
 
         public Task<IEnumerable<Room>> GetAllRoom()
