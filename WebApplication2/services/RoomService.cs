@@ -3,7 +3,6 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using WebApplication2.Data;
 using WebApplication2.Data.Model;
-using WebApplication2.Models.Room;
 
 namespace WebApplication2.services
 {
@@ -77,9 +76,9 @@ namespace WebApplication2.services
             await _db.SaveChangesAsync();
         }
 
-        public Task<IEnumerable<Room>> GetAllRoom()
+        public async Task<IEnumerable<Room>> GetAllRoom()
         {
-            throw new NotImplementedException();
+            return await _db.Rooms.ToListAsync();
         }
 
         public async Task<IEnumerable<T>> GetSearchResults<T>(bool availableOnly = false, int? minCapacity = null, int? type = null)
@@ -118,12 +117,22 @@ namespace WebApplication2.services
 
         public async Task<T> GetId<T>(int id)
         {
-            return await _db.Rooms.Where(x => x.RoomId == id).ProjectTo<T>(_mapper.ConfigurationProvider).FirstOrDefaultAsync();
+            return await _db.Rooms.Where(x => x.RoomId == id).Include(x => x.RoomImages).ProjectTo<T>(_mapper.ConfigurationProvider).FirstOrDefaultAsync();
         }
 
         public async Task<bool> IsRoomNumberFree(int number, int? roomId = null)
         {
             return await _db.Rooms.AsNoTracking().Where(x => x.RoomId != roomId).AnyAsync(x => x.RoomNumber == number);
+        }
+
+        public int GetRoomCapacity(int roomId)
+        {
+            var room = _db.Rooms.Find(roomId);
+            if (room != null)
+            {
+                return room.Capacity;
+            }
+            return 0; // or any default value you want
         }
     }
 }

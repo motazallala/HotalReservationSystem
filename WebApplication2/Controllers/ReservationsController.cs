@@ -3,16 +3,23 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplication2.Data;
 using WebApplication2.Data.Model;
+using WebApplication2.Models.Reservation;
+using WebApplication2.services;
+using WebApplication2.services.Common;
 
 namespace WebApplication2.Controllers
 {
     public class ReservationsController : Controller
     {
         private readonly WebApplication2DBContext _context;
+        private readonly IReservationsService _reservationsService;
+        private readonly IRoomService _roomService;
 
-        public ReservationsController(WebApplication2DBContext context)
+        public ReservationsController(WebApplication2DBContext context, IReservationsService reservationsService, IRoomService roomService)
         {
             _context = context;
+            _reservationsService = reservationsService;
+            _roomService = roomService;
         }
 
         // GET: Reservations
@@ -22,10 +29,29 @@ namespace WebApplication2.Controllers
             return View(await webApplication2DBContext.ToListAsync());
         }
 
-        public async Task<IActionResult> Index2()
+        public async Task<IActionResult> Index2(int id = 1, int pageSize = 5)
         {
-            var webApplication2DBContext = _context.Reservations.Include(r => r.Room);
-            return View(await webApplication2DBContext.ToListAsync());
+            var searchResults = await _reservationsService.GetSearchResults<ReservationViewModel>();
+            var resultsCount = searchResults.Count();
+            if (pageSize <= 0)
+            {
+                pageSize = 5;
+            }
+
+            var pages = (int)Math.Ceiling((double)resultsCount / pageSize);
+            if (id > resultsCount || id < 1)
+            {
+                id = 1;
+            }
+            var reservation = new ReservationIndexViewModel
+            {
+                PagesCount = pages,
+                CurrentPage = id,
+                Controller = "Reservations",
+                Action = nameof(Index2),
+                Reservations = searchResults.GetPageItems(id, pageSize)
+            };
+            return View(reservation);
         }
 
         // GET: Reservations/Details/5
@@ -48,10 +74,18 @@ namespace WebApplication2.Controllers
         }
 
         // GET: Reservations/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomId");
-            return View();
+            var allRoomAvailable = await _roomService.GetAllRoom();
+            var model = new ss
+            {
+                Rooms = allRoomAvailable.Select(rt => new SelectListItem
+                {
+                    Value = rt.RoomId.ToString(),
+                    Text = rt.RoomNumber.ToString()
+                }).ToList()
+            };
+            return View(model);
         }
 
         // POST: Reservations/Create
@@ -59,7 +93,7 @@ namespace WebApplication2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ReservationId,FullName,Nationality,NationalityId,PhoneNumber,Email,IsAdult,CheckIn,CheckOut,Breakfast,Lunch,Dinner,ExtraBed,Price,RoomId")] Reservation reservation)
+        public async Task<IActionResult> Create(Reservation reservation)
         {
             if (ModelState.IsValid)
             {
@@ -165,6 +199,12 @@ namespace WebApplication2.Controllers
         private bool ReservationExists(int id)
         {
             return (_context.Reservations?.Any(e => e.ReservationId == id)).GetValueOrDefault();
+        }
+
+        public IActionResult GetRoomCapacity(int roomId)
+        {
+            var roomCapacity = _roomService.GetRoomCapacity(roomId);  // Implement this method
+            return Json(roomCapacity);
         }
     }
 }

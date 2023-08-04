@@ -18,11 +18,6 @@
                 <input asp-for="Capacity" class="form-control" />
                 <span asp-validation-for="Capacity" class="text-danger"></span>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsTaken" /> @Html.DisplayNameFor(model => model.IsTaken)
-                </label>
-            </div>
             <div class="form-group">
                 <label asp-for="AdultPrice" class="control-label"></label>
                 <input asp-for="AdultPrice" class="form-control" />
@@ -48,7 +43,7 @@
             <!-- Allow uploading new images -->
             <div class="form-group">
                 <label>Upload New Images</label>
-                <input type="file" name="roomImages" multiple class="form-control" accept="image/*" />
+                <input type="file" name="RoomImagesFile" multiple class="form-control" accept="image/*" />
             </div>
 
             <div class="form-group">
@@ -58,13 +53,13 @@
         </div>
     </div>
     <!-- Display existing room images and change buttons -->
-    @if (Model.RoomImagesUrl != null && Model.RoomImagesUrl.Any())
+    @if (Model.RoomImages != null && Model.RoomImages.Any())
     {
         <h3>Existing Images</h3>
         <div class="container">
             <div class="row">
 
-                @foreach (var image in Model.RoomImagesUrl)
+                @foreach (var image in Model.RoomImages)
                 {
                     @*                    <div class="form-group">
             <img src="@image.ImageUrl" alt="Room Image" width="200" height="200" />

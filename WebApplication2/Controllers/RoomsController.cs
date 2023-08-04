@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using WebApplication2.Data;
 using WebApplication2.Data.Model;
 using WebApplication2.Models.Room;
@@ -14,14 +13,12 @@ namespace WebApplication2.Controllers
     [Authorize]
     public class RoomsController : Controller
     {
-        private readonly WebApplication2DBContext _context;
         private readonly IRoomService _roomService;
         private readonly IRoomTypeService _roomTypeService;
         private readonly IRoomImageService _roomImageService;
 
         public RoomsController(WebApplication2DBContext context, IRoomService roomService, IRoomTypeService roomTypeService, IRoomImageService roomImageService)
         {
-            _context = context;
             _roomService = roomService;
             _roomTypeService = roomTypeService;
             _roomImageService = roomImageService;
@@ -63,7 +60,7 @@ namespace WebApplication2.Controllers
             // Fetch available room types from the database and populate the dropdown list
             var availableRoomTypes = await _roomTypeService.GetAllRoomTypes();
 
-            var model = new RoomInputModel
+            var model = new RoomWithRoomTypeInputModel
             {
                 RoomTypes = availableRoomTypes.Select(rt => new SelectListItem
                 {
@@ -77,20 +74,20 @@ namespace WebApplication2.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(RoomInputModel model)
+        public async Task<IActionResult> Create(RoomWithRoomTypeInputModel model)
         {
             if (ModelState.IsValid)
             {
                 var room = new Room
                 {
-                    Capacity = model.Capacity,
-                    AdultPrice = model.AdultPrice,
-                    ChildrenPrice = model.ChildrenPrice,
-                    RoomNumber = model.RoomNumber,
-                    RoomTypeId = model.RoomTypeId
+                    Capacity = model.Input.Capacity,
+                    AdultPrice = model.Input.AdultPrice,
+                    ChildrenPrice = model.Input.ChildrenPrice,
+                    RoomNumber = model.Input.RoomNumber,
+                    RoomTypeId = model.Input.RoomTypeId
                 };
 
-                await _roomService.Add(room, model.RoomImages);
+                await _roomService.Add(room, model.Input.RoomImagesFile);
 
                 // Redirect to the room list or any other desired page after successful addition
                 return RedirectToAction("Index");
@@ -101,25 +98,30 @@ namespace WebApplication2.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(int id, RoomInputModel input)
         {
             // Retrieve the room and its images from the database
-            var room = await _context.Rooms.Include(r => r.RoomImages).FirstOrDefaultAsync(r => r.RoomId == id);
+            var rooms = await _roomService.GetId<RoomInputModel>(id);
 
-            if (room == null)
+            if (rooms == null)
             {
                 return NotFound();
+            }
+            if (!ModelState.IsValid)
+            {
+                return View(input);
             }
 
             // Map the room to the view model and pass it to the edit view
             var viewModel = new RoomInputModel
             {
-                Capacity = room.Capacity,
-                AdultPrice = room.AdultPrice,
-                ChildrenPrice = room.ChildrenPrice,
-                RoomNumber = room.RoomNumber,
-                RoomTypeId = room.RoomTypeId,
-                RoomImagesUrl = room.RoomImages // Assign the existing images to the view model
+                Capacity = rooms.Capacity,
+                AdultPrice = rooms.AdultPrice,
+                ChildrenPrice = rooms.ChildrenPrice,
+                RoomNumber = rooms.RoomNumber,
+                RoomTypeId = rooms.RoomTypeId,
+                RoomImages = rooms.RoomImages, // Assign the existing images to the view model
+                RoomImagesFile = rooms.RoomImagesFile
             };
 
             // Fetch available room types from the database and populate the dropdown list
@@ -163,9 +165,9 @@ namespace WebApplication2.Controllers
             };
 
             // Handle image changes (if the user uploaded new images)
-            if (viewModel.RoomImages != null && viewModel.RoomImages.Any())
+            if (viewModel.RoomImagesFile != null && viewModel.RoomImagesFile.Any())
             {
-                await _roomService.Update(id, froom, viewModel.RoomImages);
+                await _roomService.Update(id, froom, viewModel.RoomImagesFile);
             }
             else
             {
@@ -195,9 +197,6 @@ namespace WebApplication2.Controllers
 
             // Call the delete service.
             await _roomService.Delete(id);
-
-            // Save db changes.
-            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
