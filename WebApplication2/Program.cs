@@ -1,10 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Services.External;
 using Web.Common;
-
-using WebApplication2.services;
-using Microsoft.AspNetCore.Identity;
 using WebApplication2.Data;
+using WebApplication2.services;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("WebApplication2ContextConnection") ?? throw new InvalidOperationException("Connection string 'WebApplication2ContextConnection' not found.");
@@ -18,6 +16,8 @@ builder.Services.AddControllersWithViews();
 /*builder.Services.AddDbContext<ApplicationDBContext>(op =>
 op.UseSqlServer(builder.Configuration.GetConnectionString("myDb"))
 );*/
+
+builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
 builder.Services.AddScoped<IRoomTypeService, RoomTypeService>();
 builder.Services.AddScoped<IReservationsService, ReservationService>();
