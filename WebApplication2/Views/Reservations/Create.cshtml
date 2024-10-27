@@ -1,0 +1,134 @@
+﻿@model WebApplication2.Models.Reservation.ss
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Reservation</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" method="get">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Input.FullName" class="control-label"></label>
+                <input asp-for="Input.FullName" class="form-control" />
+                <span asp-validation-for="Input.FullName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.Nationality" class="control-label"></label>
+                <input asp-for="Input.Nationality" class="form-control" />
+                <span asp-validation-for="Input.Nationality" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.NationalityId" class="control-label"></label>
+                <input asp-for="Input.NationalityId" class="form-control" />
+                <span asp-validation-for="Input.NationalityId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.PhoneNumber" class="control-label"></label>
+                <input asp-for="Input.PhoneNumber" class="form-control" />
+                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.Email" class="control-label"></label>
+                <input asp-for="Input.Email" class="form-control" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Input.IsAdult" /> @Html.DisplayNameFor(model => model.Input.IsAdult)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.CheckIn" class="control-label"></label>
+                <input asp-for="Input.CheckIn" class="form-control" />
+                <span asp-validation-for="Input.CheckIn" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.CheckOut" class="control-label"></label>
+                <input asp-for="Input.CheckOut" class="form-control" />
+                <span asp-validation-for="Input.CheckOut" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Input.Breakfast" /> @Html.DisplayNameFor(model => model.Input.Breakfast)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Input.Lunch" /> @Html.DisplayNameFor(model => model.Input.Lunch)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Input.Dinner" /> @Html.DisplayNameFor(model => model.Input.Dinner)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Input.ExtraBed" /> @Html.DisplayNameFor(model => model.Input.ExtraBed)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.Price" class="control-label"></label>
+                <input asp-for="Input.Price" class="form-control" />
+                <span asp-validation-for="Input.Price" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.RoomId" class="control-label"></label>
+                <select id="roomDropdown" asp-for="Input.RoomId" class="form-control" asp-items="@Model.Rooms"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+            <div class="form-group">
+                <div id="capacityIcons">
+                    <!-- Icons will be dynamically added here -->
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+<h1>Capacity: <span id="capacity">-</span></h1>
+
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#roomDropdown').change(function () {
+                var selectedRoomId = $(this).val();
+
+                // Make an AJAX request to fetch room capacity
+                $.ajax({
+                    url: '/Reservations/GetRoomCapacity',  // Replace with your actual controller method
+                    type: 'GET',
+                    data: { roomId: selectedRoomId },
+                    success: function (capacity) {
+                        $('#capacity').text(capacity);
+
+                        // Clear existing icons
+                        $('#capacityIcons').empty();
+
+                        // Draw icons based on capacity
+                        for (var i = 0; i < capacity; i++) {
+                            $('#capacityIcons').append('<input name="motaz" class="form-control" />'); // Replace with the appropriate Font Awesome icon class
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("AJAX error:", error);
+                    }
+                });
+            });
+        });
+
+    </script>
+}
+

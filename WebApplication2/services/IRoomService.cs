@@ -1,5 +1,4 @@
 ﻿using WebApplication2.Data.Model;
-using WebApplication2.Models.Room;
 
 namespace WebApplication2.services
 {
@@ -26,5 +25,7 @@ namespace WebApplication2.services
         public Task<T> GetId<T>(int id);
 
         public Task<bool> IsRoomNumberFree(int number, int? roomId = null);
+
+        int GetRoomCapacity(int roomId);
     }
 }

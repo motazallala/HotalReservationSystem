@@ -2,7 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using Services.External;
-using WebApplication2.Areas.Identity.Data;
+using WebApplication2.Data;
 using WebApplication2.Data.Model;
 
 namespace WebApplication2.services

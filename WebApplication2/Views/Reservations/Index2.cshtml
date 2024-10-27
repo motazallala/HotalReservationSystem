@@ -1,0 +1,111 @@
+﻿@model WebApplication2.Models.Reservation.ReservationIndexViewModel
+
+@{
+    ViewData["Title"] = "Index";
+    var searchString = Context.Request.Query["search"].ToString();
+}
+
+<h1>Index</h1>
+
+
+
+<div class="row row-cards">
+    <div class="col-lg-8">
+        <div class="card p-3">
+            <div class="table-responsive">
+                <p>
+                    <a asp-action="Create" class="btn btn-pill btn-green">Create New</a>
+                </p>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                FullName
+                            </th>
+                            <th>
+                                Nationality
+                            </th>
+                            <th>
+                                PhoneNumber
+                            </th>
+                            <th>
+                                CheckIn
+                            </th>
+                            <th>
+                                CheckOut
+                            </th>
+                            <th>
+                                Price
+                            </th>
+                            <th>
+                                Room
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Reservations)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.FullName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Nationality)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.PhoneNumber)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CheckIn)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CheckOut)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Price)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Room.RoomNumber)
+                                </td>
+                                <td>
+                                    <a asp-action="Edit" asp-route-id="@item.ReservationId">Edit</a> |
+                                    <a asp-action="Details" asp-route-id="@item.ReservationId">Details</a> |
+                                    <a asp-action="Delete" asp-route-id="@item.ReservationId">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card p-3">
+            <form method="get">
+                <div class="mb-3">
+                    <label class="form-label">Separated inputs</label>
+                    <div class="row g-2">
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="Search for…" name="search" value="@searchString" />
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-icon" aria-label="Button" asp-route-search="@searchString">
+
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <circle cx="10" cy="10" r="7" />
+                                    <line x1="21" y1="21" x2="15" y2="15" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<partial name="_PaginationPartial" model="Model" />
